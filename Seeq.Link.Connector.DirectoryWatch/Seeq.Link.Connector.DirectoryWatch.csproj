@@ -125,21 +125,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\sdk\Seeq.Link.SDK\Seeq.Link.SDK.csproj">
-      <Project>{b1c20a13-3bbd-4518-b990-989fee3cdb7e}</Project>
-      <Name>Seeq.Link.SDK</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="licenses\license.txt" />
-    <Content Include="licenses\protoc-license.txt" />
-    <Content Include="protos\google\protobuf\csharp_options.proto" />
-    <Content Include="protos\google\protobuf\descriptor.proto" />
-    <Content Include="protos\tutorial\addressbook.proto" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
