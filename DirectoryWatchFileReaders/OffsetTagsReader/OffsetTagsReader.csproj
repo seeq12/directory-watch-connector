@@ -84,10 +84,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\sdk\Seeq.Link.SDK\Seeq.Link.SDK.csproj">
-      <Project>{b1c20a13-3bbd-4518-b990-989fee3cdb7e}</Project>
-      <Name>Seeq.Link.SDK</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Seeq.Link.Connector.DirectoryWatch\Seeq.Link.Connector.DirectoryWatch.csproj">
       <Project>{aa742c48-832d-4ae5-83b2-cd7330d9be79}</Project>
       <Name>Seeq.Link.Connector.DirectoryWatch</Name>
