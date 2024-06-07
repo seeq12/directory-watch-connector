@@ -70,3 +70,7 @@ ServiceFabricBackup/
 # Nuget
 nuget.exe
 packages/
+
+
+# Package
+dist/

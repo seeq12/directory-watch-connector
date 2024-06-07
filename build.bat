@@ -10,8 +10,6 @@ if not exist ".\nuget.exe" powershell -Command "(new-object System.Net.WebClient
 .\nuget install DirectoryWatchFileReaders\TimestampAssetTagsCsvReaderV1\packages.config -o packages
 .\nuget install DirectoryWatchFileReaders\TimestampTagsCsvReader\packages.config -o packages
 
-@REM "%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe" "%~dp0.\Seeq.Link.Connector.DirectoryWatch.sln" /p:Configuration="Release"
-@REM "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" "%~dp0.\Seeq.Link.Connector.DirectoryWatch.sln" /p:Configuration="Release"
 for /f "tokens=*" %%i in ('"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe') do set MSBUILD_PATH=%%i
 "%MSBUILD_PATH%" "%~dp0.\Seeq.Link.Connector.DirectoryWatch.sln" /p:Configuration="Release"
 if ERRORLEVEL 1 goto :Error
