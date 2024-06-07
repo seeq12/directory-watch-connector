@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Seeq.Link.Connector.DirectoryWatch.Config;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
 

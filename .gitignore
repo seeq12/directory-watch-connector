@@ -68,4 +68,5 @@ ServiceFabricBackup/
 *.DS_Store
 
 # Nuget
+nuget.exe
 packages/

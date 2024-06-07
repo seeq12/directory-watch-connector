@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
-using Seeq.Link.SDK;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Link.SDK.Utilities;
 
 namespace Seeq.Link.Connector.DirectoryWatch {
