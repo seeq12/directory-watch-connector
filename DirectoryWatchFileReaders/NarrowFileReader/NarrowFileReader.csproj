@@ -94,13 +94,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="licenses\license.txt" />
-    <Content Include="licenses\protoc-license.txt" />
-    <Content Include="protos\google\protobuf\csharp_options.proto" />
-    <Content Include="protos\google\protobuf\descriptor.proto" />
-    <Content Include="protos\tutorial\addressbook.proto" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

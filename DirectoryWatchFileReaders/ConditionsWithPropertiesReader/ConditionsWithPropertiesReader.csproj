@@ -97,13 +97,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="licenses\license.txt" />
-    <Content Include="licenses\protoc-license.txt" />
-    <Content Include="protos\google\protobuf\csharp_options.proto" />
-    <Content Include="protos\google\protobuf\descriptor.proto" />
-    <Content Include="protos\tutorial\addressbook.proto" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
