@@ -3,7 +3,7 @@ $ROOT_OUT_DIR = "dist"
 $SAMPLES_DIR = "Samples"
 $OUT_FILE = "Seeq.Link.Connector.DirectoryWatch.zip"
 $DOCS_OUT_DIR = Join-Path $ROOT_OUT_DIR "Docs"
-$CONFIG_OUT_DIR = Join-Path $ROOT_OUT_DIR "Configurations\Backup"
+$CONFIG_OUT_DIR = Join-Path $ROOT_OUT_DIR "Configurations\Backups"
 
 $TEST_DATA_IN_DIR = Join-Path $SAMPLES_DIR "TestData"
 $TEST_DATA_OUT_DIR = Join-Path $ROOT_OUT_DIR "TestData"
