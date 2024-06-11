@@ -24,6 +24,7 @@ if not exist ".\nuget.exe" powershell -Command "(new-object System.Net.WebClient
 .\nuget install DirectoryWatchFileReaders\TimestampTagsCsvReader\packages.config -o packages
 
 for /f "tokens=*" %%i in ('"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe') do set MSBUILD_PATH=%%i
+"%MSBUILD_PATH%" "%~dp0.\Seeq.Link.Connector.DirectoryWatch.sln" /p:Configuration="Debug"
 "%MSBUILD_PATH%" "%~dp0.\Seeq.Link.Connector.DirectoryWatch.sln" /p:Configuration="Release"
 if ERRORLEVEL 1 goto :Error
 

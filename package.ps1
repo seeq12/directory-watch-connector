@@ -31,7 +31,9 @@ New-Item -ItemType Directory -Path $READERS_OUT_DIR
 
 # Create data file reader output subdirectories
 foreach ($dir in $READER_DIRS) {
-    New-Item -ItemType Directory -Path (Join-Path $READERS_OUT_DIR $dir)
+    $readerDir = Join-Path $READERS_OUT_DIR ("$dir\bin")
+    New-Item -ItemType Directory -Path (Join-Path $readerDir "Debug")
+    New-Item -ItemType Directory -Path (Join-Path $readerDir "Release")
     Write-Output "Directory $dir created"
 }
 
@@ -40,7 +42,9 @@ Write-Output "Copying the data file readers"
 foreach ($dir in $READER_DIRS) {
     $source = Join-Path $READERS_IN_DIR $dir
     $destination = Join-Path $READERS_OUT_DIR $dir
-    Copy-Item -Path "$source\*.cs*" -Destination $destination
+    
+    Copy-Item -Path "$source\bin\Debug\*Reader.*" -Destination "$destination\bin\Debug"
+    Copy-Item -Path "$source\bin\Release\*Reader.*" -Destination "$destination\bin\Release"
 }
 
 Write-Output "Copying the connector libraries"
