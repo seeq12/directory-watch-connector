@@ -1,17 +1,17 @@
 @echo off
 
-echo y|rmdir /s Seeq.Link.Connector.DirectoryWatch\bin 
-echo y|rmdir /s Seeq.Link.Connector.DirectoryWatch\obj
+rmdir /Q /S "Seeq.Link.Connector.DirectoryWatch\bin" >nul 2>&1
+rmdir /Q /S "Seeq.Link.Connector.DirectoryWatch\obj" >nul 2>&1
 
-echo y|rmdir /s .\DirectoryWatchFileReaders\ConditionsWithPropertiesReader\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\ConditionsWithPropertiesReader\obj
-echo y|rmdir /s .\DirectoryWatchFileReaders\NarrowFileReader\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\NarrowFileReader\obj
-echo y|rmdir /s .\DirectoryWatchFileReaders\OffsetTagsReader\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\OffsetTagsReader\obj
-echo y|rmdir /s .\DirectoryWatchFileReaders\TagsWithMetadataReader\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\TagsWithMetadataReader\obj
-echo y|rmdir /s .\DirectoryWatchFileReaders\TimestampAssetTagsCsvReaderV1\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\TimestampAssetTagsCsvReaderV1\obj
-echo y|rmdir /s .\DirectoryWatchFileReaders\TimestampTagsCsvReader\bin
-echo y|rmdir /s .\DirectoryWatchFileReaders\TimestampTagsCsvReader\obj
+rmdir /Q /S "DirectoryWatchFileReaders\ConditionsWithPropertiesReader\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\ConditionsWithPropertiesReader\obj"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\NarrowFileReader\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\NarrowFileReader\obj"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\OffsetTagsReader\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\OffsetTagsReader\obj"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TagsWithMetadataReader\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TagsWithMetadataReader\obj"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TimestampAssetTagsCsvReaderV1\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TimestampAssetTagsCsvReaderV1\obj"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TimestampTagsCsvReader\bin"  >nul 2>&1
+rmdir /Q /S "DirectoryWatchFileReaders\TimestampTagsCsvReader\obj"  >nul 2>&1
