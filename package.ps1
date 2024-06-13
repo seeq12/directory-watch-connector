@@ -1,7 +1,7 @@
 # Define variables
 $ROOT_OUT_DIR = "dist"
 $SAMPLES_DIR = "Samples"
-$OUT_FILE = "Seeq.Link.Connector.DirectoryWatch.zip"
+$OUT_FILE = "$env:SEEQ_CONNECTOR_NAME-InstallKit.zip"
 $DOCS_OUT_DIR = Join-Path $ROOT_OUT_DIR "Docs"
 $CONFIG_OUT_DIR = Join-Path $ROOT_OUT_DIR "Configurations\Backups"
 
@@ -80,9 +80,14 @@ Write-Output "Publishing data file readers"
 foreach ($dir in $READER_DIRS)
 {
     $source = Join-Path $READERS_IN_DIR $dir
+    $readmeSource = Join-Path $source "README.md"
     $destination = Join-Path $READERS_OUT_DIR $dir
 
-    Copy-Item -Path "$source\README.md" -Destination $destination
+    if (Test-Path $readmeSource)
+    {
+        Copy-Item -Path "$source\README.md" -Destination $destination
+    }
+
     Copy-Item -Path "$source\bin\Debug\*Reader.*" -Destination "$destination\bin\Debug"
     Copy-Item -Path "$source\bin\Release\*Reader.*" -Destination "$destination\bin\Release"
 }
