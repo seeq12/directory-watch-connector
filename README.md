@@ -55,7 +55,7 @@ To do that, execute the `package` command in your build environment. If the comm
 7. Restart Seeq.
 
 ## Testing your Connector
-1. After restarting Seeq, you should begin to see messages in the `net-link` logs that contain the text "DirectoryWatch".  These will probably be errors on a new install, since the directories to be watched probably don't exist yet.
+1. After restarting Seeq, you should begin to see messages in the `net-link` logs that contain the text "DirectoryWatch".  These will probably be errors on a new install, since you'll need to configure the `"FileDirectories"` list to point to existing network paths that the agent can access.
 2. There should be at least three files in `$DATA\data\plugins\connectors\DirectoryWatch\Configurations\Backups`.  Open these and review the JSON configurations stored therein.  Copy any you would like to use for testing from the Backups folder to its parent, the `Configurations` folder.
 3. Note in particular the `"FileDirectories"` list.  The list should contain fully-qualified paths to each directory to be watched by this configuration.  If referencing a network folder, you should use the UNC name, not the name starting with the letter of a mapped network drive.
 4. Make a copy of the included `TestData` folder somewhere, and make sure the account running Seeq has read and write privileges to the folder.
