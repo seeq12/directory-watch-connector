@@ -1,6 +1,25 @@
-TODO: CRAB-42908 update readme
+# Overview
 
-DirectoryWatch
+Welcome to the Seeq DirectoryWatch Connector. .
+
+# Developing this Connector
+
+This connector is to be developed on the Windows operating system. This section is broken into subsections that deal with prerequisites for and relevant information about how this connector can be extended, built, packaged and deployed. 
+
+## Environment
+
+This connector is written in C# and depends on and targets .NET Framework 4.8. If you do not have .NET Framework and need to install it, you may also need to restart your machine for the new version to take effect. If you are unsure what version of the .NET Framework you have installed, [this guide](https://learn.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed) should be able to help.
+
+All the commands and script in this guide are supposed to run from the 
+
+## Integrated Development Environment (IDE)
+
+Microsoft Visual Studio is the recommended tool for building and debugging this connector however other IDEs such as JetBrains Rider could be used if you and/or your team are more familiar with those. This connector has been built and tested using Microsoft Visual Studio 2022.
+
+If you do not have Visual Studio or any alternative IDE installed, you can obtain a copy of the Community version of Visual Studio from this [link](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false).
+
+
+
 
 NOTE: As of the R21.0.40.03 release, it is no longer necessary to replace the Seeq.Link.SDK whenever a new version of Seeq is installed or when first installing DirectoryWatch.
 
