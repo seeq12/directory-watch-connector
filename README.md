@@ -1,6 +1,6 @@
 # Overview
 
-Welcome to the Seeq DirectoryWatch Connector. .
+Welcome to the Seeq DirectoryWatch Connector. The DirectoryWatch is a _"push"_ connector that imports data into Seeq from files in a one-time ETL (Extract-Transform-Load) for each file placed into a _"watched"_ directory.  It provides complete flexibility on the format of files to be imported; however, this is at the cost of some configuration or potentially writing a custom reader in C# if the data in the file is in a particularly challenging format.
 
 
 # Developing this Connector
