@@ -4,16 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
-using Seeq.Link.SDK;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Link.SDK.Utilities;
 
 namespace Seeq.Link.Connector.DirectoryWatch {
+
     /// <summary>
     /// Loads any DLLs found on its ReaderSearchPaths properties that have classes that
     /// implement the <see cref="DataFileReader"/> interface.
     /// </summary>
-
     public class ReaderLoader {
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger

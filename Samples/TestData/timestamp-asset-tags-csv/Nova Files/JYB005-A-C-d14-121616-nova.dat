@@ -1,0 +1,4 @@
+Analyzer,Vessel #,Batch ID,Date and Time,Media Type,Temperature,pH @ 37 ,Na+ mmol/L,K+ mmol/L,Gluc g/L,Gln mmol/L,GLU mmol/L,Lac g/L,NH4+ mmol/L,Osm mOsm/kg
+01 CRT24,,JY-29-198|005|1,12/16/2016 8:16,Batch,40.7,7.6703,127.6,1.54,5.544,1.749,0,1.705,3.377,362.23
+01 CRT24,,JY-29-198|005|3,12/16/2016 8:16,Batch,40.7,7.5603,125.4,1.32,6.424,1.056,0,1.826,4.103,365.31
+01 CRT24,,JY-29-198|005|5,12/16/2016 8:16,Batch,40.7,7.6813,123.2,11.22,6.446,2.574,0,2.035,3.267,380.49

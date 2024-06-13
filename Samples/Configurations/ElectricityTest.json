@@ -1,0 +1,30 @@
+{
+  "Name": "ElectricityTest",
+  "ID": "ElectricityTest",
+  "Reader": "TagsWithMetadataReaderV1",
+  "Description": "blah",
+  "Enabled": true,
+  "FileDirectories": [
+	  "C:\\SeeqDatasources\\TestData\\tags-with-metadata\\ElectricityTest"
+  ],
+  "IncludeSubdirectories": true,
+  "FileNameFilter": ".*\\.csv$",
+  "ReaderConfiguration": {
+	"UseFilePathForHierarchy": true,
+	"FilePathHierarchyRoot": "ElectricityTest",
+	"FilePathHierarchyIncludesFilename": false,
+	"NameRow": "1",
+	"FirstDataRow": "5",
+  "UOMRow": "2",
+  "InterpStyleRow": "3",
+  "MaxInterpRow": "4",
+	"DefaultMaxInterp": "90min",
+	"DefaultInterpType": "step",
+	"TimestampFormat": "dd/MM/yyyy HH:mm",
+	"TimeZone": "+00:00",
+	"EnforceTimestampOrder": false,
+	"RecordsPerDataPacket": 100,
+  "PostInvalidSamplesInsteadOfSkipping": true
+  },
+  "SignalConfigurations": [null]
+}

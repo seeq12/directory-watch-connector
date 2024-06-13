@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Seeq.Link.SDK.Interfaces;
-using Seeq.Link.SDK.Utilities;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using System.IO;
 

@@ -8,9 +8,6 @@ using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
 using Seeq.Link.SDK;
 using Seeq.Link.SDK.Interfaces;
-using Seeq.Link.SDK.Utilities;
-using Seeq.Sdk.Api;
-using Seeq.Sdk.Model;
 using ConnectionState = Seeq.Link.SDK.Interfaces.ConnectionState;
 
 namespace Seeq.Link.Connector.DirectoryWatch {
