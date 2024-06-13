@@ -2,7 +2,7 @@
 
 set SEEQ_DW_CONNECTOR_HOME=%~dp0.
 
-for /f "tokens=*" %%a IN ('dir /b *Seeq.Link.Connector*') DO set SEEQ_CONNECTOR_NAME=%%a
+for /f "tokens=4 delims=." %%a IN ('dir /b *Seeq.Link.Connector*') DO set SEEQ_CONNECTOR_NAME=%%a
 
 title Seeq Directory Watch Connector Dev Environment
 
