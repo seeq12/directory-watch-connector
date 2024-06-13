@@ -82,6 +82,7 @@ foreach ($dir in $READER_DIRS)
     $source = Join-Path $READERS_IN_DIR $dir
     $destination = Join-Path $READERS_OUT_DIR $dir
 
+    Copy-Item -Path "$source\README.md" -Destination $destination
     Copy-Item -Path "$source\bin\Debug\*Reader.*" -Destination "$destination\bin\Debug"
     Copy-Item -Path "$source\bin\Release\*Reader.*" -Destination "$destination\bin\Release"
 }
