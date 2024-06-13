@@ -16,6 +16,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Interfaces {
         public abstract void ReadFile(string name);
 
         public virtual List<SignalConfigurationV1> SignalConfigurations { get; set; }
+
         public virtual List<ConditionConfigurationV1> ConditionConfigurations { get; set; }
     }
 }

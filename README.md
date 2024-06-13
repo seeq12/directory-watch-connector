@@ -48,11 +48,11 @@ To do that, execute the `package` command in your build environment. If the comm
 ## Installation
 1. Extract the generated Install Kit _*.zip_ from the [package]() step above to a directory of your choice.
 2. Shut down Seeq.
-2. If you already have a copy of DirectoryWatch installed, make a backup of `$DATA\data\plugins\connectors\DirectoryWatch`, where `$DATA` is your Seeq data folder.  The Seeq data folder is `C:\ProgramData\Seeq` by default.  If the DirectoryWatch folder doesn't exist, you'll need to create it first.
-3. For a new installation, simply copy all the contents of the extracted Install Kit folder to the newly-created `$DATA\data\plugins\connectors\DirectoryWatch` folder.  An upgrade involves replacing the files and folders of the existing DirectoryWatch folder with the appropriate versions from the extracted Install Kit folder.  For files in the Configurations folder, a comparison of the old and new versions is recommended to make sure any changes to the JSON schema are noted and adjusted as appropriate.  For FileReaders, the old versions of prepackaged readers should be replaced.  Custom readers may need to be updated to work correctly with the latest versions of the Seeq SDK and DirectoryWatch.
-4. If you already have a copy of directory watch installed, make a backup of your current `$DATA\data\configuration\link\DirectoryWatch Connector.json`.
-5. Place a copy of the included `DirectoryWatch Connector.json` file in the `Docs` subdirectory of the extracted Install Kit folder into the connector configuration folder, `$DATA\data\configuration\link`.  Make sure the lists for the `"FileReaderFolders"` and `"ConfigurationFolders"` keys in the connector configuration JSON file correctly reference the locations of the folders where you have the readers and configurations.
-6. Restart Seeq.
+3. If you already have a copy of DirectoryWatch installed, make a backup of `$DATA\data\plugins\connectors\DirectoryWatch`, where `$DATA` is your Seeq data folder.  The Seeq data folder is `C:\ProgramData\Seeq` by default.  If the DirectoryWatch folder doesn't exist, you'll need to create it first.
+4. For a new installation, simply copy all the contents of the extracted Install Kit folder to the newly-created `$DATA\data\plugins\connectors\DirectoryWatch` folder.  An upgrade involves replacing the files and folders of the existing DirectoryWatch folder with the appropriate versions from the extracted Install Kit folder.  For files in the Configurations folder, a comparison of the old and new versions is recommended to make sure any changes to the JSON schema are noted and adjusted as appropriate.  For FileReaders, the old versions of prepackaged readers should be replaced.  Custom readers may need to be updated to work correctly with the latest versions of the Seeq SDK and DirectoryWatch.
+5. If you already have a copy of directory watch installed, make a backup of your current `$DATA\data\configuration\link\DirectoryWatch Connector.json`.
+6. Place a copy of the included `DirectoryWatch Connector.json` file in the `Docs` subdirectory of the extracted Install Kit folder into the connector configuration folder, `$DATA\data\configuration\link`.  Make sure the lists for the `"FileReaderFolders"` and `"ConfigurationFolders"` keys in the connector configuration JSON file correctly reference the locations of the folders where you have the readers and configurations.
+7. Restart Seeq.
 
 ## Testing your Connector
 1. After restarting Seeq, you should begin to see messages in the `net-link` logs that contain the text "DirectoryWatch".  These will probably be errors on a new install, since the directories to be watched probably don't exist yet.
@@ -72,16 +72,16 @@ To do that, execute the `package` command in your build environment. If the comm
 
 ## Extending the Build Process
 
-TODO
+All scripts and processes necessary for building, debugging and packaging this connector have been included in thsi repository to afford you the opportunity to make updates and/or customize any and every step of the process to you and your team's needs.
 
-NOTE: As of the R21.0.40.03 release, it is no longer necessary to replace the Seeq.Link.SDK whenever a new version of Seeq is installed or when first installing DirectoryWatch.
+## Custom Readers
 
-Steps to Install:
+If you have files in a format or structured in a manner that doesn't quite work with any of the included Readers, you can create a Reader for your particular file structure. When such is the case, it is recommended to start with the existing Reader that has the greatest similarity to the Reader that is needed.  Each Reader must implement a constructor, an Initialize() method, and a ReadFile(string filename) method to satisfy the DirectoryWatchFileReader interface.  A few convenience methods like SendData and GetHeaderIndex are provided in Seeq.Link.DirectoryWatcy.Utilities.DirectoryWatchUtilities to make it easier to focus more on the details of how to read the file and less on how to get the data into Seeq, but there is no obligation to use these methods - the data can be posted directly using the Seeq SDK.
 
+To create a custom Reader, create a new project with the `Reader` suffix in the `DirectoryWatchFileReaders` directory. Create a class for your file and inherit from `DataFileReader` overriding all `abstract` members with implementations that work for your file structure. You can take a look at the built-in Readers for samples of how to go about implementing your reader.
 
-Steps to Test:
+Next, update the `clean.bat` script to include your Reader in the clean up process. Update the `build.bat` script to allow for installing its' packages. Finally, update the `package.ps1` powershell script, updating the `$READER_DIRS` variable with your Reader to include it in the built Install Kit package.
 
+Custom readers can be placed anywhere the account running the .NET Agent (usually the account running Seeq Server) can find them; the containing folder for the Reader just has to be added to the `"FileReaderFolders"` list in `DirectoryWatch Connector.json`.  Once such a folder is listed in the connector configuration in such a way, the Reader dll located at `ReferencedFileReaderFolder\SomeFileReader\bin\Debug` or `ReferencedFileReaderFolder\SomeFileReader\bin\Release` will be dynamically loaded when the connector is started, depending on whether the connector configuration has `"DebugMode"` set to `true` or `false`.  
 
-Custom Readers:
-
-Custom readers can be placed anywhere the account running the .NET Agent (usually the account running Seeq Server) can find them; the containing folder for the Reader just has to be added to the FileReaderFolders list in DirectoryWatch Connector.json.  Once such a folder is listed in the connector configuration in such a way, the Reader dll located at ReferencedFileReaderFolder\SomeFileReader\bin\Debug or ReferencedFileReaderFolder\SomeFileReader\bin\Release will be dynamically loaded when the connector is started, depending on whether the connector configuration has DebugMode set to true or false.  A custom reader should only be defined if the existing Readers cannot be configured to suit the files to be read.  When such is the case, it is recommended to start with the existing Reader that has the greatest similarity to the Reader that is needed.  Each Reader must implement a constructor, an Initialize() method, and a ReadFile(string filename) method to satisfy the DirectoryWatchFileReader interface.  A few convenience methods like SendData and GetHeaderIndex are provided in Seeq.Link.DirectoryWatcy.Utilities.DirectoryWatchUtilities to make it easier to focus more on the details of how to read the file and less on how to get the data into Seeq, but there is no obligation to use these methods - the data can be posted directly using the Seeq SDK.
+Remember, a custom reader should only be defined if the existing Readers cannot be configured to suit the files to be read. 
