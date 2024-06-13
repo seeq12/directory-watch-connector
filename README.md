@@ -2,6 +2,7 @@
 
 Welcome to the Seeq DirectoryWatch Connector. .
 
+
 # Developing this Connector
 
 This connector is to be developed on the Windows operating system. This section is broken into subsections that deal with prerequisites for and relevant information about how this connector can be extended, built, packaged and deployed. 
@@ -10,7 +11,14 @@ This connector is to be developed on the Windows operating system. This section 
 
 This connector is written in C# and depends on and targets .NET Framework 4.8. If you do not have .NET Framework and need to install it, you may also need to restart your machine for the new version to take effect. If you are unsure what version of the .NET Framework you have installed, [this guide](https://learn.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed) should be able to help.
 
-All the commands and script in this guide are supposed to run from the 
+All the commands and script in this guide are supposed to run from the Windows Command Prompt (`cmd`).
+
+To get started developing this connector:
+1. Launch the Windows Command Prompt
+2. Change directory to the root directory of this connector.
+3. At the prompt, execute the _environment_ script: Type `environment`.
+
+Throughout this document, when we refer to the _build environment_, which is simply a command prompt or terminal window where you've executed the `environment` script as described.
 
 ## Integrated Development Environment (IDE)
 
@@ -18,8 +26,28 @@ Microsoft Visual Studio is the recommended tool for building and debugging this 
 
 If you do not have Visual Studio or any alternative IDE installed, you can obtain a copy of the Community version of Visual Studio from this [link](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false).
 
+With Visual Studio installed, execute `ide` in your build environment. This should launch a Microsoft Visual Studio instance of the connector from which you can make changes and updates to the connector as necessary.
+
+## Building your Connector
+
+With your build environment and your IDE setup, we recommend that you build the connector to ensure the build process runs successfully on your local system.
+
+From your build environment, execute the `build` command. If it fails for some (non-obvious) reason, email the output (including the error message) to [support@seeq.com](mailto:support@seeq.com).
+
+To clean the project to ensure cached files are not used in the build, execute the `clean` command before the `build` command.
+
+## Packaging your Connector
+
+Once you are satisfied with the changes made to your connector, and you are ready to deploy to be run on the Seeq Agent, you need to package the connector.
+
+To do that, execute the `package` command in your build environment. If the command gets executed successfully, a `dist` build output directory should have been generated with the connector _*.zip_ file.
 
 
+# Extending your Connector
+
+## Extending the Build Process
+
+TODO
 
 NOTE: As of the R21.0.40.03 release, it is no longer necessary to replace the Seeq.Link.SDK whenever a new version of Seeq is installed or when first installing DirectoryWatch.
 
