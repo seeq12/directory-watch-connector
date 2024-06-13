@@ -1,0 +1,6 @@
+{
+  "DebugMode": false,
+  "FileReaderFolders": ["C:\\ProgramData\\Seeq\\data\\plugins\\connectors\\DirectoryWatch\\DataFileReaders"],
+  "ConfigurationFolders": ["C:\\ProgramData\\Seeq\\data\\plugins\\connectors\\DirectoryWatch\\Configurations"],
+  "Version": "Seeq.Link.Connector.DirectoryWatch.Config.DirectoryWatchConnectorConfigV1"
+}

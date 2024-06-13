@@ -66,3 +66,11 @@ ServiceFabricBackup/
 # OS-specific files
 .DS_Store
 *.DS_Store
+
+# Nuget
+nuget.exe
+packages/
+
+
+# Package
+dist/

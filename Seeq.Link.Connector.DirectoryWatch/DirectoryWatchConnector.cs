@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Seeq.Link.Connector.DirectoryWatch.Config;
-using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.SDK;
 using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Api;

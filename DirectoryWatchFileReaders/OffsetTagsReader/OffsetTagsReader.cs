@@ -10,7 +10,6 @@ using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
 using Seeq.Link.SDK.Interfaces;
-using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
 
 namespace OffsetTagsReader {
