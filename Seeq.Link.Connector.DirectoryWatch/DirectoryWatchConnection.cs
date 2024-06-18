@@ -132,8 +132,12 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     string dir = directory.EndsWith("\\") ? directory : directory + "\\";
                     try {
                         if (System.IO.Directory.Exists(dir)) {
+                            var maxFilesPerDirectory = this.connectionConfig.ReaderConfiguration.TryGetValue(nameof(BaseReaderConfig.MaxFilesPerDirectory),
+                                    out var configMaxFilesPerDir)
+                                ? configMaxFilesPerDir
+                                : "500";
                             this.dataFileDirectoryMonitors[dir] =
-                                new DataFileDirectoryMonitor(dir, this.fileNameFilter, this.subdirectoryFilter, this.includeSubdirectories, this.reader, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1));
+                                new DataFileDirectoryMonitor(dir, this.fileNameFilter, this.subdirectoryFilter, this.includeSubdirectories, this.reader, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1), maxFilesPerDirectory);
                             this.dataFileDirectoryMonitors[dir].Initialize();
                         } else {
                             string failedToConnect = string.Format("Failed to connect to directory {0}", dir);
