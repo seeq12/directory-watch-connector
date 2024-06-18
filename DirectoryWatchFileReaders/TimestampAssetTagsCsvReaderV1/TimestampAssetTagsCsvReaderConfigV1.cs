@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Seeq.Link.Connector.DirectoryWatch.Config;
 
 namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
-    public class TimestampAssetTagsCsvReaderConfigV1 {
+    public class TimestampAssetTagsCsvReaderConfigV1 : BaseReaderConfig {
         public int HeaderRow { get; set; } //This is the 1-based row, counting from the first row of the CSV file, that contains the headers.
         public int FirstDataRow { get; set; }
         public string TimestampHeaders { get; set; }
@@ -15,13 +16,12 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public string AssetPathSeparator { get; set; }
         public string AssetPathHeaders { get; set; }
         public int RecordsPerDataPacket { get; set; }
-        public bool DebugMode { get; set; }
         public string Delimiter { get; set; }
         public string CultureInfo { get; set; }
         public string ScopedTo { get; set; }
         public bool PostInvalidSamplesInsteadOfSkipping { get; set; }
 
-        public TimestampAssetTagsCsvReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
+        public TimestampAssetTagsCsvReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode): base(readerConfiguration, debugMode) {
             try {
                 this.DebugMode = debugMode;
                 this.HeaderRow = Convert.ToInt32(readerConfiguration["HeaderRow"]);
