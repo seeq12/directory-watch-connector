@@ -15,11 +15,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private List<DirectoryWatchConnectionConfigV1> connectionConfigs = new List<DirectoryWatchConnectionConfigV1>();
 
-        public override string Name {
-            get {
-                return "DirectoryWatch Connector";
-            }
-        }
+        public override string Name => "DirectoryWatch Connector";
 
         /// <summary>
         /// Gets or creates the stored-in-Seeq DirectoryWatch datasource.  Returns the DatasourceOutputV1.
@@ -85,23 +81,24 @@ namespace Seeq.Link.Connector.DirectoryWatch {
 
             if (this.Config.ConfigurationFolders == null || this.Config.ConfigurationFolders.Count == 0) {
                 this.Config.ConfigurationFolders = new List<string> { @"C:\ProgramData\Seeq\data\plugins\connectors\DirectoryWatch\Configurations" };
-                DirectoryWatchConnectionConfigV1 datasourceConfiguration = new DirectoryWatchConnectionConfigV1();
-                datasourceConfiguration.Name = "Sample Configuration";
-                datasourceConfiguration.Id = "Some Unique Identifier";
-                datasourceConfiguration.Description = "A sample configuration.";
-                datasourceConfiguration.Enabled = false;
-                datasourceConfiguration.Reader = "Some Reader classname";
-                datasourceConfiguration.FileDirectories = new List<string> { @"Relative\Directory\Name", @"C:\Absolute\Directory\Name" };
-                datasourceConfiguration.SignalConfigurations = new List<SignalConfigurationV1>();
-                SignalConfigurationV1 exampleSignalConfiguration = new SignalConfigurationV1() {
-                    NameInFile = "FileHeaderName",
-                    NameInSeeq = "SeeqSignalName",
-                    Description = "Some signal from some watched directory.",
-                    InterpolationType = "linear",
-                    MaximumInterpolation = "1 day",
-                    Uom = "Some Seeq-compatible UOM, such as m/s"
+                DirectoryWatchConnectionConfigV1 datasourceConfiguration = new DirectoryWatchConnectionConfigV1 {
+                    Name = "Sample Configuration",
+                    Id = "Some Unique Identifier",
+                    Description = "A sample configuration.",
+                    Enabled = false,
+                    Reader = "Some Reader classname",
+                    FileDirectories = new List<string> { @"Relative\Directory\Name", @"C:\Absolute\Directory\Name" },
+                    SignalConfigurations = new List<SignalConfigurationV1> {
+                            new SignalConfigurationV1() {
+                                NameInFile = "FileHeaderName",
+                                NameInSeeq = "SeeqSignalName",
+                                Description = "Some signal from some watched directory.",
+                                InterpolationType = "linear",
+                                MaximumInterpolation = "1 day",
+                                Uom = "Some Seeq-compatible UOM, such as m/s"
+                            }
+                        }
                 };
-                datasourceConfiguration.SignalConfigurations.Add(exampleSignalConfiguration);
                 this.connectionConfigs.Add(datasourceConfiguration);
                 // TODO, JamesPD, 15Nov2017: the above references to the program data folder need to be made relative to the actual data folder,
                 // and once this is done, the folders need to be created and the example configuration saved to the Configurations folder.
@@ -110,7 +107,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                 this.connectionConfigs = readConfigFiles(this.Config.ConfigurationFolders);
                 var repeatedConfigIDs = this.connectionConfigs.GroupBy(x => x.Id).Where(x => x.Count() > 1);
 
-                if (repeatedConfigIDs.Count() > 0) {
+                if (repeatedConfigIDs.Any()) {
                     log.Error("Duplicate config IDs detected in DirectoryWatch configurations; this must be resolved before any connections are established.");
                 } else {
                     ReaderLoader readerLoader = new ReaderLoader();
@@ -120,9 +117,9 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     readerLoader.Initialize(searchPaths);
                     Dictionary<string, Func<Dictionary<string, string>, object>> readerInstantiators = readerLoader.LoadDataFileReaderDLLs(this.Config.DebugMode);
                     foreach (DirectoryWatchConnectionConfigV1 datasourceConfig in this.connectionConfigs) {
-                        if (readerInstantiators.ContainsKey(datasourceConfig.Reader)) {
+                        if (readerInstantiators.TryGetValue(datasourceConfig.Reader, out var readerInstantiator)) {
                             DirectoryWatchConnection connection = new DirectoryWatchConnection(this.AgentService, this,
-                                datasourceConfig, readerInstantiators[datasourceConfig.Reader]);
+                                datasourceConfig, readerInstantiator);
                             this.InitializeConnection(connection);
                         } else {
                             log.Error($"Failed to find reader {datasourceConfig.Reader} for configuration {datasourceConfig.Name}, skipping.");
