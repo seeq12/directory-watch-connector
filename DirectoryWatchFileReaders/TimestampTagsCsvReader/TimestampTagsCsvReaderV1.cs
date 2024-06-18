@@ -60,13 +60,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public override void ReadFile(string filename) {
             log.Info($"Method ReadFile called for file {filename}");
 
-            var fileSize = new FileInfo(filename).Length;
-            var fileSizeLimitInBytes = this.ReaderConfiguration.MaxFileSizeInKB * 1024L;
-
-            if (fileSize > fileSizeLimitInBytes) {
-                log.ErrorFormat("File with name: '{0}', has size: {1}KB which exceeds the configured file size limit: {2}KB", filename, (fileSize / 1024), fileSizeLimitInBytes);
-                throw new InvalidOperationException("The file to be read exceeds the configured file size limits");
-            }
+            this.validateFileSizeLimit(log, this.ReaderConfiguration.MaxFileSizeInKB, filename);
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),

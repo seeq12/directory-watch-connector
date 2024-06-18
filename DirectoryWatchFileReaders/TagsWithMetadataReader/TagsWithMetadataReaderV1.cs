@@ -47,6 +47,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         private string filenameRegexScopeCapture;
         private string cultureInfoString;
         private string delimiter;
+        private int maxFileSizeInKb;
 
         public string Name { get; set; }
 
@@ -124,6 +125,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     readerConfiguration["CultureInfo"] : null;
                 this.delimiter = readerConfiguration.ContainsKey("Delimiter") ?
                     readerConfiguration["Delimiter"] : ",";
+
+                this.maxFileSizeInKb = readerConfiguration.TryGetValue(nameof(BaseReaderConfig.MaxFileSizeInKB), out var rawMaxFileSizeInKb)
+                    ? Convert.ToInt32(rawMaxFileSizeInKb)
+                    : 5120; // 5MB
             } catch (ArgumentException ax) {
                 log.Error(ax.Message, ax);
                 throw;
@@ -173,6 +178,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 System.Diagnostics.Debugger.Launch();
             }
             log.Info($"Method ReadFile called for file {filename}");
+
+            this.validateFileSizeLimit(log, this.maxFileSizeInKb, filename);
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),

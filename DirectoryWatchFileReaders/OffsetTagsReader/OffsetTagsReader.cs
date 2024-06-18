@@ -57,6 +57,8 @@ namespace OffsetTagsReader {
             }
             log.Info($"Method ReadFile called for file {filename}");
 
+            this.validateFileSizeLimit(log, this.readerConfig.MaxFileSizeInKB, filename);
+
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),
             // and check the timestamp and number formats.

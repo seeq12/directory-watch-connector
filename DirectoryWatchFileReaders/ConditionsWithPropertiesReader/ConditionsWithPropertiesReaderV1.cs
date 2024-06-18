@@ -149,6 +149,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public override void ReadFile(string filename) {
             log.InfoFormat("Method ReadFile called for file {0}", filename);
 
+            this.validateFileSizeLimit(log, this.ReaderConfiguration.MaxFileSizeInKB, filename);
+
             string assetPath = "";
             if (this.ReaderConfiguration.UseFilePathForHierarchy) {
                 try {

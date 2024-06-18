@@ -16,7 +16,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Config {
             this.MaxFilesPerDirectory =
                 this.getValueOrDefault(readerConfiguration, nameof(this.MaxFilesPerDirectory), 500);
             this.MaxFileSizeInKB =
-                this.getValueOrDefault(readerConfiguration, nameof(this.MaxFileSizeInKB), 50);
+                this.getValueOrDefault(readerConfiguration, nameof(this.MaxFileSizeInKB), 5120);
         }
 
         protected T getValueOrDefault<T>(Dictionary<string, string> readerConfiguration, string key, T fallbackValue) {
