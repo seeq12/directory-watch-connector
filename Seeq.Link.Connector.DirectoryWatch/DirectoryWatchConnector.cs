@@ -104,7 +104,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                 // and once this is done, the folders need to be created and the example configuration saved to the Configurations folder.
                 this.SaveConfig();
             } else {
-                this.connectionConfigs = readConfigFiles(this.Config.ConfigurationFolders);
+                this.connectionConfigs = this.readConfigFiles(this.Config.ConfigurationFolders);
                 var repeatedConfigIDs = this.connectionConfigs.GroupBy(x => x.Id).Where(x => x.Count() > 1);
 
                 if (repeatedConfigIDs.Any()) {

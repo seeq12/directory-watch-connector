@@ -5,7 +5,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Config {
 
     public abstract class BaseReaderConfig {
         public bool DebugMode { get; set; }
-        
+
         public int MaxFilesPerDirectory { get; set; }
 
         public int MaxFileSizeInKB { get; set; }
