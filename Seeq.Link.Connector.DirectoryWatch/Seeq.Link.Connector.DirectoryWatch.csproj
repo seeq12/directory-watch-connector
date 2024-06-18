@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\BaseReaderConfig.cs" />
     <Compile Include="Config\CapsulePropertyConfigV1.cs" />
     <Compile Include="Config\DirectoryWatchConnectionConfigV1.cs" />
     <Compile Include="Config\DirectoryWatchConnectorConfigV1.cs" />
