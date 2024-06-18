@@ -5,137 +5,139 @@
   "Description": "Configuration for Nova file reader.",
   "Enabled": true,
   "FileDirectories": [
-	  "C:\\SeeqDatasources\\TestData\\timestamp-asset-tags-csv\\Nova Files"
+    "C:\\SeeqDatasources\\TestData\\timestamp-asset-tags-csv\\Nova Files"
   ],
   "IncludeSubdirectories": true,
   "FileNameFilter": ".*\\.dat$",
   "ReaderConfiguration": {
-	"HeaderRow": "1",
-	"FirstDataRow": "2",
-	"DebugMode": false,
-	"Delimiter": ",",
-	"PostInvalidSamplesInsteadOfSkipping": false,
-	"TimestampHeaders": "Date and Time",
-	"TimestampFormat": "M/d/yyyy H:mm",
-	"TimeZone": null,
-	"EnforceTimestampOrder": false,
-	"RecordsPerDataPacket": 10,	
-	"AssetTreeRootName": "Projects",
-	"AssetPathSeparator": "|",
-	"AssetPathHeaders": "Batch ID"
+    "HeaderRow": "1",
+    "FirstDataRow": "2",
+    "DebugMode": false,
+    "Delimiter": ",",
+    "PostInvalidSamplesInsteadOfSkipping": false,
+    "TimestampHeaders": "Date and Time",
+    "TimestampFormat": "M/d/yyyy H:mm",
+    "TimeZone": null,
+    "EnforceTimestampOrder": false,
+    "RecordsPerDataPacket": 10,
+    "AssetTreeRootName": "Projects",
+    "AssetPathSeparator": "|",
+    "AssetPathHeaders": "Batch ID",
+    "MaxFilesPerDirectory": "500",
+    "MaxFileSizeInKB": "50"
   },
   "SignalConfigurations": [
-	{
-	  "NameInSeeq": "Analyzer",
-	  "NameInFile": "Analyzer",
-	  "Uom": "string",
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description":  "Analyzer machine name"
-	},
-	{
-	  "NameInFile": "Vessel #",
-	  "NameInSeeq": "Vessel #",
-	  "Uom": "string",
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInSeeq": "Batch ID",
-	  "NameInFile": "Batch ID",
-	  "Uom": "string",
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInFile": "Media Type",
-	  "NameInSeeq": "Media Type",
-	  "Uom": "string",
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInFile": "Temperature",
-	  "NameInSeeq": "Temperature",
-	  "Uom": "C",
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInFile": "pH @ 37 ",
-	  "NameInSeeq": "pH",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInFile": "Na+ mmol/L",
-	  "NameInSeeq": "Na+ mmol/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description":  null
-	},
-	{
-	  "NameInFile": "K+ mmol/L",
-	  "NameInSeeq": "K+ mmol/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Gluc g/L",
-	  "NameInSeeq": "Gluc g/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Gln mmol/L",
-	  "NameInSeeq": "Gln mmol/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "GLU mmol/L",
-	  "NameInSeeq": "GLU mmol/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Lac g/L",
-	  "NameInSeeq": "Lac g/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "NH4+ mmol/L",
-	  "NameInSeeq": "NH4+ mmol/L",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-		{
-	  "NameInFile": "Osm mOsm/kg",
-	  "NameInSeeq": "Osm mOsm/kg",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	}
+    {
+      "NameInSeeq": "Analyzer",
+      "NameInFile": "Analyzer",
+      "Uom": "string",
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": "Analyzer machine name"
+    },
+    {
+      "NameInFile": "Vessel #",
+      "NameInSeeq": "Vessel #",
+      "Uom": "string",
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInSeeq": "Batch ID",
+      "NameInFile": "Batch ID",
+      "Uom": "string",
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Media Type",
+      "NameInSeeq": "Media Type",
+      "Uom": "string",
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Temperature",
+      "NameInSeeq": "Temperature",
+      "Uom": "C",
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "pH @ 37 ",
+      "NameInSeeq": "pH",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Na+ mmol/L",
+      "NameInSeeq": "Na+ mmol/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "K+ mmol/L",
+      "NameInSeeq": "K+ mmol/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Gluc g/L",
+      "NameInSeeq": "Gluc g/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Gln mmol/L",
+      "NameInSeeq": "Gln mmol/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "GLU mmol/L",
+      "NameInSeeq": "GLU mmol/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Lac g/L",
+      "NameInSeeq": "Lac g/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "NH4+ mmol/L",
+      "NameInSeeq": "NH4+ mmol/L",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Osm mOsm/kg",
+      "NameInSeeq": "Osm mOsm/kg",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    }
   ]
 }
