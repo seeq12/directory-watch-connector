@@ -42,8 +42,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.AssetPathSeparator = readerConfiguration["AssetPathSeparator"];
                 this.AssetPathHeaders = readerConfiguration["AssetPathHeaders"];
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
+                if (readerConfiguration.TryGetValue("Delimiter", out var value)) {
+                    this.Delimiter = value;
                 } else {
                     this.Delimiter = ",";
                 }

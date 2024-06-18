@@ -9,7 +9,5 @@ namespace Seeq.Link.Connector.DirectoryWatch.Config {
         public List<string> FileReaderFolders { get; set; }
 
         public List<string> ConfigurationFolders { get; set; }
-
-        public List<DirectoryWatchConnectionConfigV1> DatasourceConfigurations { get; set; } = new List<DirectoryWatchConnectionConfigV1>();
     }
 }

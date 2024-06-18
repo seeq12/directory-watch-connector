@@ -73,7 +73,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
         public override void Initialize(IAgentService agentService) {
             base.Initialize(agentService, new ConfigObject[] { new DirectoryWatchConnectorConfigV1() });
 
-            getDatasourceEventually(agentService);
+            this.getDatasourceEventually(agentService);
 
             if (this.Config.FileReaderFolders == null || this.Config.FileReaderFolders.Count == 0) {
                 this.Config.FileReaderFolders = new List<string> { @"C:\ProgramData\Seeq\data\plugins\connectors\DirectoryWatch\DataFileReaders" };
