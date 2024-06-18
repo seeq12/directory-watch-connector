@@ -42,15 +42,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.FilePathHierarchyRoot = readerConfiguration["FilePathHierarchyRoot"];
                 this.FilePathHierarchyIncludesFilename = Convert.ToBoolean(readerConfiguration["FilePathHierarchyIncludesFilename"]);
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
-                } else {
-                    this.Delimiter = ",";
-                }
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfiguration.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfiguration["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.CultureInfo = readerConfiguration.ContainsKey("CultureInfo") ? readerConfiguration["CultureInfo"] : null;
-                this.ScopedTo = readerConfiguration.ContainsKey("ScopedTo") ? readerConfiguration["ScopedTo"] : null;
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfiguration, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.CultureInfo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.CultureInfo), null);
+                this.ScopedTo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.ScopedTo), null);
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());

@@ -42,15 +42,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.AssetPathSeparator = readerConfiguration["AssetPathSeparator"];
                 this.AssetPathHeaders = readerConfiguration["AssetPathHeaders"];
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.TryGetValue("Delimiter", out var value)) {
-                    this.Delimiter = value;
-                } else {
-                    this.Delimiter = ",";
-                }
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfiguration.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfiguration["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.CultureInfo = readerConfiguration.ContainsKey("CultureInfo") ? readerConfiguration["CultureInfo"] : null;
-                this.ScopedTo = readerConfiguration.ContainsKey("ScopedTo") ? readerConfiguration["ScopedTo"] : null;
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfiguration, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.CultureInfo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.CultureInfo), null);
+                this.ScopedTo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.ScopedTo), null);
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());

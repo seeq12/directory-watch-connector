@@ -30,11 +30,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.FilePathHierarchyRoot = readerConfiguration["FilePathHierarchyRoot"];
                 this.FilePathHierarchyIncludesFilename = Convert.ToBoolean(readerConfiguration["FilePathHierarchyIncludesFilename"]);
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
-                } else {
-                    this.Delimiter = ",";
-                }
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());

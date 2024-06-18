@@ -107,9 +107,8 @@ namespace OffsetTagsReader {
 
                 this.RecordsPerDataPacket = readerConfig.ContainsKey("RecordsPerDataPacket") ?
                     Convert.ToInt32(readerConfig["RecordsPerDataPacket"]) : 1000;
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfig.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfig["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.ScopedTo = readerConfig.ContainsKey("ScopedTo") ? readerConfig["ScopedTo"] : null;
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfig, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.ScopedTo = this.getValueOrDefault<string>(readerConfig, nameof(this.ScopedTo), null);
             } catch (KeyNotFoundException) {
                 string configStr = string.Join(",\n  ", this.GetType().GetProperties().ToList());
                 string readerConfigString = string.Join(",\n  ", readerConfig.Select(x => x.Key + ": " + x.Value));

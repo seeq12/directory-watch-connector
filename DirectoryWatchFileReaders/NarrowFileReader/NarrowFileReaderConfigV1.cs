@@ -34,14 +34,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.SignalPrefixForDisambiguation = readerConfiguration.ContainsKey("SignalPrefixForDisambiguation") ? readerConfiguration["SignalPrefixForDisambiguation"] : "";
                 this.ValueHeader = readerConfiguration["ValueHeader"];
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
-                } else {
-                    this.Delimiter = ",";
-                }
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfiguration.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfiguration["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.CultureInfo = readerConfiguration.ContainsKey("CultureInfo") ? readerConfiguration["CultureInfo"] : null;
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfiguration, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.CultureInfo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.CultureInfo), null);
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());
