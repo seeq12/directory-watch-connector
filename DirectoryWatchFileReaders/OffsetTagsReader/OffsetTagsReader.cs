@@ -18,21 +18,19 @@ namespace OffsetTagsReader {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private bool debugMode;
-
         private string pathSeparator = Path.DirectorySeparatorChar.ToString();
-
         private AssetOutputV1 rootAsset;
-        private OffsetTagsReaderConfig readerConfig;
+
+        private OffsetTagsReaderConfig readerConfig => this.ReaderConfig as OffsetTagsReaderConfig;
 
         public string Name { get; set; }
 
         public OffsetTagsReader(Dictionary<string, string> readerConfiguration, bool debugMode = false) {
             try {
-                this.readerConfig = new OffsetTagsReaderConfig(readerConfiguration);
+                this.ReaderConfig = new OffsetTagsReaderConfig(readerConfiguration);
                 this.debugMode = debugMode;
             } catch (Exception ex) {
                 log.Error($"Failed to configure OffsetTagsReaderV1 due to exception: {ex.Message}", ex);
-                this.readerConfig = null;
             }
         }
 
@@ -55,9 +53,8 @@ namespace OffsetTagsReader {
             if (this.debugMode) {
                 System.Diagnostics.Debugger.Launch();
             }
-            log.Info($"Method ReadFile called for file {filename}");
 
-            this.validateFileSizeLimit(log, this.readerConfig.MaxFileSizeInKB, filename);
+            log.Info($"Method ReadFile called for file {filename}");
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),
@@ -183,10 +180,10 @@ namespace OffsetTagsReader {
                 if (!timeSpanIsFixed) {
                     try {
                         timeSpanHeaderIndex = DirectoryWatchUtilities.GetHeaderIndex(readerConfig.TimeSpanHeader, headers);
-                    } catch (Exception ex) {
+                    } catch (Exception) {
                         parser.Close();
                         parser.Dispose();
-                        throw ex;
+                        throw;
                     }
                 }
 
@@ -195,11 +192,11 @@ namespace OffsetTagsReader {
                     string signalNameInFile = signalConfig.NameInFile;
                     try {
                         signalHeaderIndices[signalNameInFile] = DirectoryWatchUtilities.GetHeaderIndex(signalNameInFile, headers);
-                    } catch (Exception ex) {
+                    } catch (Exception) {
                         if (signalConfig.Required) {
                             parser.Close();
                             parser.Dispose();
-                            throw ex;
+                            throw;
                         }
                     }
                 }

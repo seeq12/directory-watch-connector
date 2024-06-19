@@ -20,13 +20,13 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         private AssetOutputV1 rootAsset;
         private bool debugMode;
 
-        public TagsWithMetadataReaderConfigV1 ReaderConfiguration { get; set; }
+        private TagsWithMetadataReaderConfigV1 ReaderConfiguration => this.ReaderConfig as TagsWithMetadataReaderConfigV1;
 
         public string Name { get; set; }
 
         public TagsWithMetadataReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
             try {
-                this.ReaderConfiguration = new TagsWithMetadataReaderConfigV1(readerConfiguration, debugMode);
+                this.ReaderConfig = new TagsWithMetadataReaderConfigV1(readerConfiguration, debugMode);
                 this.debugMode = this.ReaderConfiguration.DebugMode;
             } catch (Exception ex) {
                 log.Error($"Failed to configure TagsWithMetadataReaderConfigV1 due to exception: {ex.Message}", ex);
@@ -71,8 +71,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             }
 
             log.Info($"Method ReadFile called for file {filename}");
-
-            this.validateFileSizeLimit(log, this.ReaderConfiguration.MaxFileSizeInKB, filename);
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),

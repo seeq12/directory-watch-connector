@@ -14,19 +14,17 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
     public class NarrowFileReaderV1 : DataFileReader {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly object lockObj = new object();
 
         private string pathSeparator = @"\";
-
         private CultureInfo cultureInfo;
 
-        public NarrowFileReaderConfigV1 ReaderConfiguration { get; set; }
+        public NarrowFileReaderConfigV1 ReaderConfiguration => this.ReaderConfig as NarrowFileReaderConfigV1;
 
         public string Name { get; set; }
 
         public NarrowFileReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode = false) {
             try {
-                this.ReaderConfiguration = new NarrowFileReaderConfigV1(readerConfiguration, debugMode);
+                this.ReaderConfig = new NarrowFileReaderConfigV1(readerConfiguration, debugMode);
             } catch (Exception ex) {
                 log.Error($"Failed to configure TimestampTagsCsvReaderV1 due to exception: {ex.Message}", ex);
             }
@@ -45,8 +43,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
         public override void ReadFile(string filename) {
             log.InfoFormat("Method ReadFile called for file {0}", filename);
-
-            this.validateFileSizeLimit(log, this.ReaderConfiguration.MaxFileSizeInKB, filename);
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
             // confirm the data exists where specified for this reader (e.g., rows starting at N),
