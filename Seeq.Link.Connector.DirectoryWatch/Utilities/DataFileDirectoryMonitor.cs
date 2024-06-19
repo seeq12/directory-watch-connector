@@ -47,12 +47,13 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                 foreach (FileInfo fileInfo in info.GetFiles()) {
                     if (filenameRegex.IsMatch(fileInfo.Name)) {
                         try {
-                            string modifiedFilename = Path.ChangeExtension(fileInfo.FullName, ".importing");
+                            var originalFileName = fileInfo.FullName;
+                            string modifiedFilename = Path.ChangeExtension(originalFileName, ".importing");
                             if (File.Exists(modifiedFilename)) {
                                 File.Delete(modifiedFilename);
                             }
-                            File.Move(fileInfo.FullName, modifiedFilename);
-                            dataFileReader.ReadFile(modifiedFilename);
+                            File.Move(originalFileName, modifiedFilename);
+                            dataFileReader.ValidateAndReadFile(originalFileName, modifiedFilename);
                             string importedFilename = Path.ChangeExtension(modifiedFilename, ".imported");
                             if (File.Exists(importedFilename)) {
                                 File.Delete(importedFilename);
