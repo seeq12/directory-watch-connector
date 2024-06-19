@@ -22,16 +22,16 @@ namespace Seeq.Link.Connector.DirectoryWatch.Interfaces {
         public abstract void ReadFile(string name);
 
         public void ValidateAndReadFile(string originalFileName, string modifiedFileName) {
-            this.validateFileSizeLimit(originalFileName);
+            this.validateFileSizeLimit(originalFileName, modifiedFileName);
             this.ReadFile(modifiedFileName);
         }
 
-        private void validateFileSizeLimit(string fileName) {
-            var fileSize = new FileInfo(fileName).Length;
+        private void validateFileSizeLimit(string originalFileName, string modifiedFileName) {
+            var fileSize = new FileInfo(modifiedFileName).Length;
             var fileSizeLimitInBytes = this.ReaderConfig.MaxFileSizeInKB * 1024L;
 
             if (fileSize > fileSizeLimitInBytes) {
-                Log.ErrorFormat("File with name: '{0}', has size: {1}KB which exceeds the configured file size limit: {2}KB", fileName, Math.Round(fileSize / 1024m), fileSizeLimitInBytes);
+                Log.ErrorFormat("File with name: '{0}', has size: {1}KB which exceeds the configured file size limit: {2}KB", originalFileName, Math.Round(fileSize / 1024m), this.ReaderConfig.MaxFileSizeInKB);
                 throw new InvalidOperationException("The file to be read exceeds the configured file size limits");
             }
         }
