@@ -175,7 +175,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 } catch (Exception ex) {
                     log.ErrorFormat("Failed to create asset path for file {0} due to exception: {1}",
                         filename, ex.Message);
-                    throw ex;
+                    throw;
                 }
             }
 

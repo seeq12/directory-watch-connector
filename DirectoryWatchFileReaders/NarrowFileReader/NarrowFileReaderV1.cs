@@ -87,10 +87,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             foreach (string timestampHeader in this.ReaderConfiguration.TimestampHeaders.Split(',')) {
                 try {
                     timestampHeaderIndices.Add(DirectoryWatchUtilities.GetHeaderIndex(timestampHeader.Trim(), headers));
-                } catch (Exception ex) {
+                } catch (Exception) {
                     parser.Close();
                     parser.Dispose();
-                    throw ex;
+                    throw;
                 }
             }
 

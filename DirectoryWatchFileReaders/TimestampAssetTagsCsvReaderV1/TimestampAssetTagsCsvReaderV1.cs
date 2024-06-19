@@ -91,10 +91,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             foreach (string timestampHeader in this.ReaderConfiguration.TimestampHeaders.Split(',')) {
                 try {
                     timestampHeaderIndices.Add(DirectoryWatchUtilities.GetHeaderIndex(timestampHeader.Trim(), headers));
-                } catch (Exception ex) {
+                } catch (Exception) {
                     parser.Close();
                     parser.Dispose();
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -103,7 +103,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 string signalNameInFile = signalConfig.NameInFile;
                 try {
                     signalHeaderIndices[signalNameInFile] = DirectoryWatchUtilities.GetHeaderIndex(signalNameInFile, headers);
-                } catch (Exception ex) {
+                } catch (Exception) {
                     if (signalConfig.Required) {
                         parser.Close();
                         parser.Dispose();
