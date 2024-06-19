@@ -26,7 +26,7 @@
     "RecordsPerDataPacket": 100,
     "PostInvalidSamplesInsteadOfSkipping": true,
     "MaxFilesPerDirectory": "500",
-    "MaxFileSizeInKB": "50"
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
     null

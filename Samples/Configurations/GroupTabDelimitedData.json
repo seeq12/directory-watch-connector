@@ -22,7 +22,7 @@
     "RecordsPerDataPacket": 1000,
     "Delimiter": "\t",
     "MaxFilesPerDirectory": "500",
-    "MaxFileSizeInKB": "50"
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
     {

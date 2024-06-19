@@ -24,7 +24,7 @@
     "AssetPathSeparator": "|",
     "AssetPathHeaders": "Project ID",
     "MaxFilesPerDirectory": "500",
-    "MaxFileSizeInKB": "50"
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
     {

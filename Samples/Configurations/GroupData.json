@@ -21,7 +21,7 @@
     "EnforceTimestampOrder": true,
     "RecordsPerDataPacket": 1000,
     "MaxFilesPerDirectory": "500",
-    "MaxFileSizeInKB": "50"
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
     {
