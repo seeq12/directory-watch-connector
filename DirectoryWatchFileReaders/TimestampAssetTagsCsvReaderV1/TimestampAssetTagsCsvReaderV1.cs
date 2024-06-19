@@ -15,8 +15,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
     public class TimestampAssetTagsCsvReaderV1 : DataFileReader {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly object lockObj = new object();
-
         public TimestampAssetTagsCsvReaderConfigV1 ReaderConfiguration { get; set; }
 
         private AssetOutputV1 rootAsset;
@@ -109,7 +107,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     if (signalConfig.Required) {
                         parser.Close();
                         parser.Dispose();
-                        throw ex;
+                        throw;
                     }
                 }
             }
