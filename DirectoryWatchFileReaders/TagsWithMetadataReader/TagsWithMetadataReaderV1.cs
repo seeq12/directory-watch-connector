@@ -18,6 +18,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private AssetOutputV1 rootAsset;
+        private bool debugMode;
 
         public TagsWithMetadataReaderConfigV1 ReaderConfiguration { get; set; }
 
@@ -26,6 +27,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public TagsWithMetadataReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
             try {
                 this.ReaderConfiguration = new TagsWithMetadataReaderConfigV1(readerConfiguration, debugMode);
+                this.debugMode = this.ReaderConfiguration.DebugMode;
             } catch (Exception ex) {
                 log.Error($"Failed to configure TagsWithMetadataReaderConfigV1 due to exception: {ex.Message}", ex);
             }
@@ -34,7 +36,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         // This method should only be used for setting up things that are common to all files;
         // therefore there is no dependence on the filenames of the files being read.
         public override bool Initialize() {
-            if (this.ReaderConfiguration.DebugMode) {
+            if (this.debugMode) {
                 System.Diagnostics.Debugger.Launch();
             }
 
@@ -64,7 +66,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         }
 
         public override void ReadFile(string filename) {
-            if (this.ReaderConfiguration.DebugMode) {
+            if (this.debugMode) {
                 System.Diagnostics.Debugger.Launch();
             }
 
@@ -138,8 +140,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             int timestampHeaderIndex = 0;
 
-            //create dictionary for each, or add to dictionary? imagine dictionary where each item has all signalConfiguration? I think I like this
-            // yes!
             Dictionary<TagsWithMetadataReaderConfigV1.MetadataRow, List<string>> metadata = new Dictionary<TagsWithMetadataReaderConfigV1.MetadataRow, List<string>>();
             foreach (TagsWithMetadataReaderConfigV1.MetadataRow row in ((TagsWithMetadataReaderConfigV1.MetadataRow[])Enum.GetValues(typeof(TagsWithMetadataReaderConfigV1.MetadataRow)))) {
                 metadata.Add(row, null);
