@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Seeq.Link.SDK.Utilities;
 
 namespace Seeq.Link.Connector.DirectoryWatch.Config {
 
@@ -13,10 +14,16 @@ namespace Seeq.Link.Connector.DirectoryWatch.Config {
         protected BaseReaderConfig(Dictionary<string, string> readerConfiguration, bool debugMode) {
             this.DebugMode = debugMode;
 
-            this.MaxFilesPerDirectory =
+            var maxFilesPerDirectory =
                 this.getValueOrDefault(readerConfiguration, nameof(this.MaxFilesPerDirectory), 500);
-            this.MaxFileSizeInKB =
+            var maxFileSizeInKB =
                 this.getValueOrDefault(readerConfiguration, nameof(this.MaxFileSizeInKB), 5120); // 5MB
+
+            Preconditions.CheckArgument(maxFilesPerDirectory > 0, "The maximum file count has to be a positive integer");
+            Preconditions.CheckArgument(maxFileSizeInKB > 0, "The maximum file size has to be a positive integer");
+
+            this.MaxFilesPerDirectory = maxFilesPerDirectory;
+            this.MaxFileSizeInKB = maxFileSizeInKB;
         }
 
         protected T getValueOrDefault<T>(Dictionary<string, string> readerConfiguration, string key, T fallbackValue) {
