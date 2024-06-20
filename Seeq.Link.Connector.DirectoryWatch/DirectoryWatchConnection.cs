@@ -69,8 +69,6 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     "ConditionConfigurations list and a SignalConfigurations list.");
             }
 
-            this.connectionService.StoreDatasourceProperties(true, new List<ScalarPropertyV1>());
-
             if (connectionConfig.ConditionConfigurations != null) {
                 this.reader = (DataFileReader)readerInstantiator(connectionConfig.ReaderConfiguration);
                 this.reader.ConditionConfigurations = connectionConfig.ConditionConfigurations;
