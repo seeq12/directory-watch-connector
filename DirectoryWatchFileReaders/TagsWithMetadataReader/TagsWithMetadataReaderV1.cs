@@ -430,7 +430,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = fileScopedTo
                     };
-                    if (DirectoryWatchUtilities.SendData(signalData)) {
+                    if (DirectoryWatchUtilities.SendSignalData(signalData)) {
                         log.Info($"Successfully posted data for the {recordCounter} records ending on line {parser.LineNumber}");
                         seeqSignalData.Clear();
                         recordCounter = 0;
@@ -451,7 +451,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     SeeqSignalData = seeqSignalData,
                     ScopedTo = fileScopedTo
                 };
-                if (DirectoryWatchUtilities.SendData(signalData)) {
+                if (DirectoryWatchUtilities.SendSignalData(signalData)) {
                     log.Info($"Successfully posted data for the {recordCounter} records ending on line {parser.LineNumber}");
                     seeqSignalData.Clear();
                     recordCounter = 0;

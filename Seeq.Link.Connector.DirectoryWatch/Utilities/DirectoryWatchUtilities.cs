@@ -143,7 +143,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             }
         }
 
-        public static bool SendData(DirectoryWatchSignalData signalData, bool skipBadSamples = false, bool skipNullValueSamples = false, bool noTree = false) {
+        public static bool SendSignalData(DirectoryWatchSignalData signalData, bool skipBadSamples = false, bool skipNullValueSamples = false, bool noTree = false) {
             // Now that all prechecks have been passed, look up each signal configuration in Seeq.  If it exists, use it.
             // If not, create it.  Each signal has two custom properties that must be set:
             // DatastoreStatus and LastStoredTimestamp.  The former may be set to

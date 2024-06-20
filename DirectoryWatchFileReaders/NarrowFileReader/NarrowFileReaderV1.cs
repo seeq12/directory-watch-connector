@@ -209,7 +209,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = signalConfigurations
                     };
-                    DirectoryWatchUtilities.SendData(signalData, true, true, true);
+                    DirectoryWatchUtilities.SendSignalData(signalData, true, true, true);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
@@ -233,7 +233,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = signalConfigurations
                 };
-                DirectoryWatchUtilities.SendData(signalData, true, true, true);
+                DirectoryWatchUtilities.SendSignalData(signalData, true, true, true);
             }
 
             parser.Close();

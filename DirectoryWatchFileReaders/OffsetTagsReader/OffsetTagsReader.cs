@@ -331,7 +331,7 @@ namespace OffsetTagsReader {
                             SeeqSignalData = seeqSignalData,
                             ScopedTo = this.readerConfig.ScopedTo
                         };
-                        if (DirectoryWatchUtilities.SendData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                        if (DirectoryWatchUtilities.SendSignalData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                             log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                             seeqSignalData.Clear();
                             recordCounter = 0;
@@ -352,7 +352,7 @@ namespace OffsetTagsReader {
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = this.readerConfig.ScopedTo
                     };
-                    if (DirectoryWatchUtilities.SendData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                    if (DirectoryWatchUtilities.SendSignalData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                         log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                         seeqSignalData.Clear();
                         recordCounter = 0;

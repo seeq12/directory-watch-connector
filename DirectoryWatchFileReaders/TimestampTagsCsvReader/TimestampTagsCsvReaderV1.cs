@@ -266,7 +266,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         SignalConfigurations = this.SignalConfigurations,
                         ScopedTo = this.ReaderConfiguration.ScopedTo
                     };
-                    DirectoryWatchUtilities.SendData(signalData);
+                    DirectoryWatchUtilities.SendSignalData(signalData);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
@@ -281,7 +281,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     SignalConfigurations = this.SignalConfigurations,
                     ScopedTo = this.ReaderConfiguration.ScopedTo
                 };
-                DirectoryWatchUtilities.SendData(signalData);
+                DirectoryWatchUtilities.SendSignalData(signalData);
             }
 
             parser.Close();
