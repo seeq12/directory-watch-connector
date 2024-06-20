@@ -43,7 +43,7 @@ namespace OffsetTagsReader {
                 System.Diagnostics.Debugger.Launch();
             }
             try {
-                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.Connection, readerConfig.AssetTreeRootName, readerConfig.ScopedTo);
+                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, readerConfig.AssetTreeRootName, readerConfig.ScopedTo);
                 return true;
             } catch (Exception ex) {
                 log.Error($"Reader initialization failed: {ex.Message}", ex);
@@ -324,7 +324,7 @@ namespace OffsetTagsReader {
                     previousTimestamp = timestampIsoString;
                     if (recordCounter == this.readerConfig.RecordsPerDataPacket) {
                         DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
-                            ConnectionService = this.Connection,
+                            ConnectionService = this.ConnectionService,
                             Filename = filename,
                             PathSeparator = pathSeparator,
                             SignalConfigurations = this.SignalConfigurations,
@@ -345,7 +345,7 @@ namespace OffsetTagsReader {
                 if (recordCounter > 0) {
                     log.Info($"Sending last batch of data to Seeq for file {filename}");
                     DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
-                        ConnectionService = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = pathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
@@ -391,7 +391,6 @@ namespace OffsetTagsReader {
 
             // If any new signals were created, initiate a metadata sync.  In doing so, query Seeq for
             // all signals that match this datasource and simply return a count.
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

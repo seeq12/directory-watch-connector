@@ -86,7 +86,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                 this.reader = (DataFileReader)readerInstantiator(connectionConfig.ReaderConfiguration);
                 this.reader.SignalConfigurations = connectionConfig.SignalConfigurations;
             }
-            this.reader.Connection = this;
+            this.reader.ConnectionService = this;
             this.includeSubdirectories = this.connectionConfig.IncludeSubdirectories;
             this.dataFileDirectoryMonitors = new Dictionary<string, DataFileDirectoryMonitor>();
             // Default regex matches anything that doesn't end in .imported or .importing

@@ -145,8 +145,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             }
             try {
                 if (this.useFilePathForHierarchy) {
-                    IItemsApi itemsApi = this.Connection.AgentService.ApiProvider.CreateItemsApi();
-                    ISignalsApi signalsApi = this.Connection.AgentService.ApiProvider.CreateSignalsApi();
+                    IItemsApi itemsApi = this.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
+                    ISignalsApi signalsApi = this.ConnectionService.AgentService.ApiProvider.CreateSignalsApi();
                     UsersApi usersApi = new UsersApi(signalsApi.Configuration.ApiClient);
                     UserOutputV1 user = usersApi.GetUserFromUsername("Auth", "Seeq", "agent_api_key");
                     if (user.IsAdmin.HasValue && user.IsAdmin.Value == true) {
@@ -157,7 +157,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             "used until the agent_api_key user is granted admin status by an existing Seeq Administrator" +
                             "through the API Reference.");
                     }
-                    rootAsset = DirectoryWatchUtilities.SetRootAsset(this.Connection, this.filePathHierarchyRoot, this.scopedTo);
+                    rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, this.filePathHierarchyRoot, this.scopedTo);
                 } else {
                     throw new ArgumentException("UseFilePathForHierarchy must be true for TagsWithMetadataReader");
                 }
@@ -423,7 +423,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
                 if (recordCounter == this.recordsPerDataPacket) {
                     DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
-                        ConnectionService = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = pathSeparator,
                         SignalConfigurations = signalConfigurations,
@@ -444,7 +444,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             if (recordCounter > 0) {
                 log.Info($"Sending last batch of data to Seeq for file {filename}");
                 DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
-                    ConnectionService = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = pathSeparator,
                     SignalConfigurations = signalConfigurations,
@@ -468,7 +468,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             // If any new signals were created, initiate a signalConfiguration sync.  In doing so, query Seeq for
             // all signals that match this datasource and simply return a count.
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

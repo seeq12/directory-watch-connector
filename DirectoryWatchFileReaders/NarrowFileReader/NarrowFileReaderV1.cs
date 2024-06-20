@@ -204,7 +204,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         }).ToList();
                     DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
-                        ConnectionService = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = signalConfigurations
@@ -228,7 +228,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     }).ToList();
                 DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
-                    ConnectionService = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = signalConfigurations
@@ -240,8 +240,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             parser.Dispose();
 
             log.InfoFormat("Completed reading all data from file {0}; sending data to Seeq database", filename);
-
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

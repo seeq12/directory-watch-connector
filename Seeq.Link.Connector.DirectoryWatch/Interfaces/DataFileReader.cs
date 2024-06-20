@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Seeq.Link.Connector.DirectoryWatch.Config;
+using Seeq.Link.SDK.Interfaces;
 
 namespace Seeq.Link.Connector.DirectoryWatch.Interfaces {
 
     public abstract class DataFileReader : IDataFileReader {
-        public DirectoryWatchConnection Connection { get; set; }
+        public IDatasourceConnectionServiceV2 ConnectionService { get; set; }
 
         public abstract bool Initialize();
 

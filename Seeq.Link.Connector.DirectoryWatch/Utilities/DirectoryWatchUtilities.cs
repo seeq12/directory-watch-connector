@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Seeq.Link.Connector.DirectoryWatch.Config;
+using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
 
@@ -88,8 +89,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             }
         }
 
-        public static DatasourceOutputV1 GetDirectoryWatchDatasource(DirectoryWatchConnection connection) {
-            IDatasourcesApi datasourcesApi = connection.AgentService.ApiProvider.CreateDatasourcesApi();
+        public static DatasourceOutputV1 GetDirectoryWatchDatasource(IDatasourceConnectionServiceV2 connectionService) {
+            IDatasourcesApi datasourcesApi = connectionService.AgentService.ApiProvider.CreateDatasourcesApi();
             string directoryWatch = "DirectoryWatch";
             DatasourceOutputListV1 datasourceOutputList = datasourcesApi.GetDatasources(directoryWatch, directoryWatch, 0, 2, false);
             if (datasourceOutputList.Datasources.Count != 1) {
@@ -102,14 +103,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
         /// <summary>
         /// Creates or updates the root asset.
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name="connectionService"></param>
         /// <param name="rootAsset"></param>
         /// <returns>The AssetOutputV1 for the root asset</returns>
-        public static AssetOutputV1 SetRootAsset(DirectoryWatchConnection connection, string assetName, string scopedTo = null) {
+        public static AssetOutputV1 SetRootAsset(IDatasourceConnectionServiceV2 connectionService, string assetName, string scopedTo = null) {
             lock (lockObj) {
-                string datasourceId = GetDirectoryWatchDatasource(connection).Id;
-                IAssetsApi assetsApi = connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = connection.AgentService.ApiProvider.CreateTreesApi();
+                string datasourceId = GetDirectoryWatchDatasource(connectionService).Id;
+                IAssetsApi assetsApi = connectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = connectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 string dataId = GuidifyString(assetName);
 
@@ -233,7 +234,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         SyncToken = syncToken,
                         DataId = pathGuid,
                         ScopedTo = signalData.ScopedTo,
-                        Description = path + " (" + signalData.ConnectionService.DatasourceId + " signal)",
+                        Description = path + " (" + datasourceId + " signal)",
                         InterpolationMethod = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).InterpolationType,
                         MaximumInterpolation = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).MaximumInterpolation,
                         ValueUnitOfMeasure = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).Uom
@@ -486,7 +487,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         DatasourceClass = datasourceOutput.DatasourceClass,
                         DatasourceId = datasourceOutput.DatasourceId,
                         DataId = pathGuid,
-                        Description = path + " (" + data.ConnectionService.DatasourceId + " Condition)",
+                        Description = path + " (" + datasourceId + " Condition)",
                         MaximumDuration = data.ConditionConfigurations.Find(x => x.ConditionName == seeqConditionName).MaximumDuration,
                     };
                     conditionBatchInput.Conditions.Add(conditionInput);

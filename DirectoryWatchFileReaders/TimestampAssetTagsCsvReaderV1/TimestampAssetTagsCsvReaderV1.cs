@@ -40,7 +40,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             try {
                 this.cultureInfo = this.ReaderConfiguration.CultureInfo != null ?
                     new CultureInfo(this.ReaderConfiguration.CultureInfo) : null;
-                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.Connection,
+                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService,
                     this.ReaderConfiguration.AssetTreeRootName, this.ReaderConfiguration.ScopedTo);
                 return true;
             } catch (Exception ex) {
@@ -238,7 +238,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     log.Info($"Sending {this.ReaderConfiguration.RecordsPerDataPacket} rows of data to Seeq; recordCount is {recordCounter}");
                     DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
-                        ConnectionService = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.ReaderConfiguration.AssetPathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
@@ -253,7 +253,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             if (seeqSignalData.Count > 0) {
                 DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
-                    ConnectionService = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = this.ReaderConfiguration.AssetPathSeparator,
                     SignalConfigurations = this.SignalConfigurations,
@@ -269,7 +269,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             // If any new signals were created, initiate a metadata sync.  In doing so, query Seeq for
             // all signals that match this datasource and simply return a count.
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }
