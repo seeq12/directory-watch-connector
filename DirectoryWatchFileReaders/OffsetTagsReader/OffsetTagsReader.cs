@@ -323,7 +323,7 @@ namespace OffsetTagsReader {
                     recordCounter++;
                     previousTimestamp = timestampIsoString;
                     if (recordCounter == this.readerConfig.RecordsPerDataPacket) {
-                        DirectoryWatchData data = new DirectoryWatchData {
+                        DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                             ConnectionService = this.Connection,
                             Filename = filename,
                             PathSeparator = pathSeparator,
@@ -331,7 +331,7 @@ namespace OffsetTagsReader {
                             SeeqSignalData = seeqSignalData,
                             ScopedTo = this.readerConfig.ScopedTo
                         };
-                        if (DirectoryWatchUtilities.SendData(data, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                        if (DirectoryWatchUtilities.SendData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                             log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                             seeqSignalData.Clear();
                             recordCounter = 0;
@@ -344,7 +344,7 @@ namespace OffsetTagsReader {
 
                 if (recordCounter > 0) {
                     log.Info($"Sending last batch of data to Seeq for file {filename}");
-                    DirectoryWatchData data = new DirectoryWatchData {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                         ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = pathSeparator,
@@ -352,7 +352,7 @@ namespace OffsetTagsReader {
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = this.readerConfig.ScopedTo
                     };
-                    if (DirectoryWatchUtilities.SendData(data, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                    if (DirectoryWatchUtilities.SendData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                         log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                         seeqSignalData.Clear();
                         recordCounter = 0;

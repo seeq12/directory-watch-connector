@@ -202,14 +202,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             Required = true,
                             Uom = null
                         }).ToList();
-                    DirectoryWatchData data = new DirectoryWatchData() {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
                         ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = signalConfigurations
                     };
-                    DirectoryWatchUtilities.SendData(data, true, true, true);
+                    DirectoryWatchUtilities.SendData(signalData, true, true, true);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
@@ -226,14 +226,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         Required = true,
                         Uom = null
                     }).ToList();
-                DirectoryWatchData data = new DirectoryWatchData() {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
                     ConnectionService = this.Connection,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = signalConfigurations
                 };
-                DirectoryWatchUtilities.SendData(data, true, true, true);
+                DirectoryWatchUtilities.SendData(signalData, true, true, true);
             }
 
             parser.Close();

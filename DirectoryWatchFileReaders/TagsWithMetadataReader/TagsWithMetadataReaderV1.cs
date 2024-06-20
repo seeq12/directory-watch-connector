@@ -422,7 +422,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 previousTimestamp = timestampIsoString;
 
                 if (recordCounter == this.recordsPerDataPacket) {
-                    DirectoryWatchData data = new DirectoryWatchData {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                         ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = pathSeparator,
@@ -430,7 +430,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = fileScopedTo
                     };
-                    if (DirectoryWatchUtilities.SendData(data)) {
+                    if (DirectoryWatchUtilities.SendData(signalData)) {
                         log.Info($"Successfully posted data for the {recordCounter} records ending on line {parser.LineNumber}");
                         seeqSignalData.Clear();
                         recordCounter = 0;
@@ -443,7 +443,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             if (recordCounter > 0) {
                 log.Info($"Sending last batch of data to Seeq for file {filename}");
-                DirectoryWatchData data = new DirectoryWatchData {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                     ConnectionService = this.Connection,
                     Filename = filename,
                     PathSeparator = pathSeparator,
@@ -451,7 +451,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     SeeqSignalData = seeqSignalData,
                     ScopedTo = fileScopedTo
                 };
-                if (DirectoryWatchUtilities.SendData(data)) {
+                if (DirectoryWatchUtilities.SendData(signalData)) {
                     log.Info($"Successfully posted data for the {recordCounter} records ending on line {parser.LineNumber}");
                     seeqSignalData.Clear();
                     recordCounter = 0;

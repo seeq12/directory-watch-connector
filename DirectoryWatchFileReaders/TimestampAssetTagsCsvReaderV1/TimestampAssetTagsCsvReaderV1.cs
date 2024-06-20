@@ -236,7 +236,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 recordCounter++;
                 if (recordCounter % this.ReaderConfiguration.RecordsPerDataPacket == 0) {
                     log.Info($"Sending {this.ReaderConfiguration.RecordsPerDataPacket} rows of data to Seeq; recordCount is {recordCounter}");
-                    DirectoryWatchData data = new DirectoryWatchData() {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
                         ConnectionService = this.Connection,
                         Filename = filename,
@@ -244,14 +244,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         SignalConfigurations = this.SignalConfigurations,
                         ScopedTo = this.ReaderConfiguration.ScopedTo
                     };
-                    DirectoryWatchUtilities.SendData(data);
+                    DirectoryWatchUtilities.SendData(signalData);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
             }
 
             if (seeqSignalData.Count > 0) {
-                DirectoryWatchData data = new DirectoryWatchData() {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
                     ConnectionService = this.Connection,
                     Filename = filename,
@@ -259,7 +259,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     SignalConfigurations = this.SignalConfigurations,
                     ScopedTo = this.ReaderConfiguration.ScopedTo
                 };
-                DirectoryWatchUtilities.SendData(data);
+                DirectoryWatchUtilities.SendData(signalData);
             }
 
             parser.Close();

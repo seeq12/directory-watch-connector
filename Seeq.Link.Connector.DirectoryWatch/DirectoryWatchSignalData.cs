@@ -5,7 +5,7 @@ using Seeq.Sdk.Model;
 
 namespace Seeq.Link.Connector.DirectoryWatch {
 
-    public class DirectoryWatchData {
+    public class DirectoryWatchSignalData {
         public string Filename { get; set; }
         public IDatasourceConnectionServiceV2 ConnectionService { get; set; }
         public string PathSeparator { get; set; }
