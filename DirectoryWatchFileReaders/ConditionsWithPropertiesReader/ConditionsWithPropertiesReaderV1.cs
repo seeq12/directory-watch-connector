@@ -418,7 +418,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                                 DataId = this.assetTreeRootDataId,
                                 Name = this.assetTreeRootName
                             },
-                            Connection = this.Connection,
+                            ConnectionService = this.Connection,
                             Filename = filename,
                             PathSeparator = this.pathSeparator,
                             ConditionConfigurations = expandedConditionConfigurations
@@ -436,7 +436,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             DataId = this.assetTreeRootDataId,
                             Name = this.assetTreeRootName
                         },
-                        Connection = this.Connection,
+                        ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         ConditionConfigurations = expandedConditionConfigurations

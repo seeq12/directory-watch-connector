@@ -260,7 +260,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     log.Info($"Sending {this.ReaderConfiguration.RecordsPerDataPacket} rows of data to Seeq; recordCount is {recordCounter}");
                     DirectoryWatchData data = new DirectoryWatchData() {
                         SeeqSignalData = seeqSignalData,
-                        Connection = this.Connection,
+                        ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
@@ -275,7 +275,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             if (seeqSignalData.Count > 0) {
                 DirectoryWatchData data = new DirectoryWatchData() {
                     SeeqSignalData = seeqSignalData,
-                    Connection = this.Connection,
+                    ConnectionService = this.Connection,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = this.SignalConfigurations,

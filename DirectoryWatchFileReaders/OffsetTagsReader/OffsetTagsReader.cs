@@ -324,7 +324,7 @@ namespace OffsetTagsReader {
                     previousTimestamp = timestampIsoString;
                     if (recordCounter == this.readerConfig.RecordsPerDataPacket) {
                         DirectoryWatchData data = new DirectoryWatchData {
-                            Connection = this.Connection,
+                            ConnectionService = this.Connection,
                             Filename = filename,
                             PathSeparator = pathSeparator,
                             SignalConfigurations = this.SignalConfigurations,
@@ -345,7 +345,7 @@ namespace OffsetTagsReader {
                 if (recordCounter > 0) {
                     log.Info($"Sending last batch of data to Seeq for file {filename}");
                     DirectoryWatchData data = new DirectoryWatchData {
-                        Connection = this.Connection,
+                        ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = pathSeparator,
                         SignalConfigurations = this.SignalConfigurations,

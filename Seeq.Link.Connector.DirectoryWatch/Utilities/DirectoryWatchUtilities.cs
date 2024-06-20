@@ -165,18 +165,18 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             bool success = true;
 
             try {
-                IItemsApi itemsApi = data.Connection.AgentService.ApiProvider.CreateItemsApi();
-                ISignalsApi signalsApi = data.Connection.AgentService.ApiProvider.CreateSignalsApi();
+                IItemsApi itemsApi = data.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
+                ISignalsApi signalsApi = data.ConnectionService.AgentService.ApiProvider.CreateSignalsApi();
                 // Since DataID is ignored by appserver for storedInSeeq signals, we use description as a proxy for this
                 // for now.  This means the current version ignores the user-specified Description in the SignalConfigurations
 
-                IDatasourcesApi datasourcesApi = data.Connection.AgentService.ApiProvider.CreateDatasourcesApi();
+                IDatasourcesApi datasourcesApi = data.ConnectionService.AgentService.ApiProvider.CreateDatasourcesApi();
                 string syncToken = DateTime.UtcNow.ToString("o");
 
-                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.Connection);
+                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.ConnectionService);
                 string datasourceId = datasourceOutput.Id;
-                IAssetsApi assetsApi = data.Connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = data.Connection.AgentService.ApiProvider.CreateTreesApi();
+                IAssetsApi assetsApi = data.ConnectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = data.ConnectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 AssetBatchInputV1 assetBatchInput = new AssetBatchInputV1();
                 assetBatchInput.HostId = datasourceId;
@@ -233,7 +233,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         SyncToken = syncToken,
                         DataId = pathGuid,
                         ScopedTo = data.ScopedTo,
-                        Description = path + " (" + data.Connection.DatasourceId + " signal)",
+                        Description = path + " (" + data.ConnectionService.DatasourceId + " signal)",
                         InterpolationMethod = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).InterpolationType,
                         MaximumInterpolation = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).MaximumInterpolation,
                         ValueUnitOfMeasure = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).Uom
@@ -429,16 +429,16 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             bool success = true;
 
             try {
-                IItemsApi itemsApi = data.Connection.AgentService.ApiProvider.CreateItemsApi();
-                IConditionsApi conditionsApi = data.Connection.AgentService.ApiProvider.CreateConditionsApi();
+                IItemsApi itemsApi = data.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
+                IConditionsApi conditionsApi = data.ConnectionService.AgentService.ApiProvider.CreateConditionsApi();
                 // Since DataID is ignored by appserver for storedInSeeq signals, we use description as a proxy for this
                 // for now.  This means the current version ignores the user-specified Description in the SignalConfigurations
 
-                IDatasourcesApi datasourcesApi = data.Connection.AgentService.ApiProvider.CreateDatasourcesApi();
-                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.Connection);
+                IDatasourcesApi datasourcesApi = data.ConnectionService.AgentService.ApiProvider.CreateDatasourcesApi();
+                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.ConnectionService);
                 string datasourceId = datasourceOutput.Id;
-                IAssetsApi assetsApi = data.Connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = data.Connection.AgentService.ApiProvider.CreateTreesApi();
+                IAssetsApi assetsApi = data.ConnectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = data.ConnectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 AssetBatchInputV1 assetBatchInput = new AssetBatchInputV1();
                 assetBatchInput.HostId = datasourceId;
@@ -486,7 +486,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         DatasourceClass = datasourceOutput.DatasourceClass,
                         DatasourceId = datasourceOutput.DatasourceId,
                         DataId = pathGuid,
-                        Description = path + " (" + data.Connection.DatasourceId + " Condition)",
+                        Description = path + " (" + data.ConnectionService.DatasourceId + " Condition)",
                         MaximumDuration = data.ConditionConfigurations.Find(x => x.ConditionName == seeqConditionName).MaximumDuration,
                     };
                     conditionBatchInput.Conditions.Add(conditionInput);

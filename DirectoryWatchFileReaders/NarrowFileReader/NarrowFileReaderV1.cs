@@ -204,7 +204,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         }).ToList();
                     DirectoryWatchData data = new DirectoryWatchData() {
                         SeeqSignalData = seeqSignalData,
-                        Connection = this.Connection,
+                        ConnectionService = this.Connection,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = signalConfigurations
@@ -228,7 +228,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     }).ToList();
                 DirectoryWatchData data = new DirectoryWatchData() {
                     SeeqSignalData = seeqSignalData,
-                    Connection = this.Connection,
+                    ConnectionService = this.Connection,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = signalConfigurations
