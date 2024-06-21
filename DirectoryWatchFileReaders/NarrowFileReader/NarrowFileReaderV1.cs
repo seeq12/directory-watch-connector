@@ -202,14 +202,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             Required = true,
                             Uom = null
                         }).ToList();
-                    DirectoryWatchData data = new DirectoryWatchData() {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
-                        Connection = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = signalConfigurations
                     };
-                    DirectoryWatchUtilities.SendData(data, true, true, true);
+                    DirectoryWatchUtilities.SendSignalData(signalData, true, true, true);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
@@ -226,22 +226,20 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                         Required = true,
                         Uom = null
                     }).ToList();
-                DirectoryWatchData data = new DirectoryWatchData() {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
-                    Connection = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = signalConfigurations
                 };
-                DirectoryWatchUtilities.SendData(data, true, true, true);
+                DirectoryWatchUtilities.SendSignalData(signalData, true, true, true);
             }
 
             parser.Close();
             parser.Dispose();
 
             log.InfoFormat("Completed reading all data from file {0}; sending data to Seeq database", filename);
-
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

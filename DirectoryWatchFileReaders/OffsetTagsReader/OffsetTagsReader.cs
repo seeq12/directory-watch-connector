@@ -43,7 +43,7 @@ namespace OffsetTagsReader {
                 System.Diagnostics.Debugger.Launch();
             }
             try {
-                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.Connection, readerConfig.AssetTreeRootName, readerConfig.ScopedTo);
+                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, readerConfig.AssetTreeRootName, readerConfig.ScopedTo);
                 return true;
             } catch (Exception ex) {
                 log.Error($"Reader initialization failed: {ex.Message}", ex);
@@ -323,15 +323,15 @@ namespace OffsetTagsReader {
                     recordCounter++;
                     previousTimestamp = timestampIsoString;
                     if (recordCounter == this.readerConfig.RecordsPerDataPacket) {
-                        DirectoryWatchData data = new DirectoryWatchData {
-                            Connection = this.Connection,
+                        DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
+                            ConnectionService = this.ConnectionService,
                             Filename = filename,
                             PathSeparator = pathSeparator,
                             SignalConfigurations = this.SignalConfigurations,
                             SeeqSignalData = seeqSignalData,
                             ScopedTo = this.readerConfig.ScopedTo
                         };
-                        if (DirectoryWatchUtilities.SendData(data, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                        if (DirectoryWatchUtilities.SendSignalData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                             log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                             seeqSignalData.Clear();
                             recordCounter = 0;
@@ -344,15 +344,15 @@ namespace OffsetTagsReader {
 
                 if (recordCounter > 0) {
                     log.Info($"Sending last batch of data to Seeq for file {filename}");
-                    DirectoryWatchData data = new DirectoryWatchData {
-                        Connection = this.Connection,
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = pathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = this.readerConfig.ScopedTo
                     };
-                    if (DirectoryWatchUtilities.SendData(data, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
+                    if (DirectoryWatchUtilities.SendSignalData(signalData, this.readerConfig.SkipBadSamples, this.readerConfig.SkipNullValueSamples)) {
                         log.Info($"Successfully posted data for the {recordCounter} records ending on line {lineNumber}");
                         seeqSignalData.Clear();
                         recordCounter = 0;
@@ -391,7 +391,6 @@ namespace OffsetTagsReader {
 
             // If any new signals were created, initiate a metadata sync.  In doing so, query Seeq for
             // all signals that match this datasource and simply return a count.
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

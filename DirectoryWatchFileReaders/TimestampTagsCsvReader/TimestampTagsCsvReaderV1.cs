@@ -45,7 +45,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     new CultureInfo(this.ReaderConfiguration.CultureInfo) : null;
                 if (this.ReaderConfiguration.UseFilePathForHierarchy) {
                     rootAsset =
-                        DirectoryWatchUtilities.SetRootAsset(this.Connection, this.ReaderConfiguration.FilePathHierarchyRoot, this.ReaderConfiguration.ScopedTo);
+                        DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, this.ReaderConfiguration.FilePathHierarchyRoot, this.ReaderConfiguration.ScopedTo);
                 } else {
                     throw new ArgumentException("UseFilePathForHierarchy must be true for TimestampTagsCsvReader");
                 }
@@ -258,38 +258,36 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 recordCounter++;
                 if (recordCounter % this.ReaderConfiguration.RecordsPerDataPacket == 0) {
                     log.Info($"Sending {this.ReaderConfiguration.RecordsPerDataPacket} rows of data to Seeq; recordCount is {recordCounter}");
-                    DirectoryWatchData data = new DirectoryWatchData() {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
-                        Connection = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
                         ScopedTo = this.ReaderConfiguration.ScopedTo
                     };
-                    DirectoryWatchUtilities.SendData(data);
+                    DirectoryWatchUtilities.SendSignalData(signalData);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
             }
 
             if (seeqSignalData.Count > 0) {
-                DirectoryWatchData data = new DirectoryWatchData() {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
-                    Connection = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = this.pathSeparator,
                     SignalConfigurations = this.SignalConfigurations,
                     ScopedTo = this.ReaderConfiguration.ScopedTo
                 };
-                DirectoryWatchUtilities.SendData(data);
+                DirectoryWatchUtilities.SendSignalData(signalData);
             }
 
             parser.Close();
             parser.Dispose();
 
             log.Info($"Completed reading all data from file {filename}; sending data to Seeq database");
-
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

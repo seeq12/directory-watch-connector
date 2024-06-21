@@ -52,7 +52,7 @@
     <Compile Include="Config\PathTransformation.cs" />
     <Compile Include="Config\SignalConfigurationV1.cs" />
     <Compile Include="DirectoryWatchConditionData.cs" />
-    <Compile Include="DirectoryWatchData.cs" />
+    <Compile Include="DirectoryWatchSignalData.cs" />
     <Compile Include="Interfaces\IDataFileReader.cs" />
     <Compile Include="ReaderLoader.cs" />
     <Compile Include="Interfaces\DataFileReader.cs" />
