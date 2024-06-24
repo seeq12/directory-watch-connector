@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
-using Seeq.Link.SDK;
 using Seeq.Link.SDK.Interfaces;
-using Seeq.Sdk.Model;
 using ConnectionState = Seeq.Link.SDK.Interfaces.ConnectionState;
 
 namespace Seeq.Link.Connector.DirectoryWatch {

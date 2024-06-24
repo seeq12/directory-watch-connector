@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
