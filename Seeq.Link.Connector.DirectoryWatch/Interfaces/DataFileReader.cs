@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using log4net;
 using Seeq.Link.Connector.DirectoryWatch.Config;
+using Seeq.Link.SDK.Interfaces;
 
 namespace Seeq.Link.Connector.DirectoryWatch.Interfaces {
 
     public abstract class DataFileReader : IDataFileReader {
+        public IDatasourceConnectionServiceV2 ConnectionService { get; set; }
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
         
         public BaseReaderConfig ReaderConfig { get; protected set; }

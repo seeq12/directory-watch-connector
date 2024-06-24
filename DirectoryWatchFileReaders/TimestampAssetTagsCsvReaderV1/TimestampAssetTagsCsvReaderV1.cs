@@ -37,7 +37,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             try {
                 this.cultureInfo = this.ReaderConfiguration.CultureInfo != null ?
                     new CultureInfo(this.ReaderConfiguration.CultureInfo) : null;
-                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.Connection,
+                rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService,
                     this.ReaderConfiguration.AssetTreeRootName, this.ReaderConfiguration.ScopedTo);
                 return true;
             } catch (Exception ex) {
@@ -233,30 +233,30 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 recordCounter++;
                 if (recordCounter % this.ReaderConfiguration.RecordsPerDataPacket == 0) {
                     log.Info($"Sending {this.ReaderConfiguration.RecordsPerDataPacket} rows of data to Seeq; recordCount is {recordCounter}");
-                    DirectoryWatchData data = new DirectoryWatchData() {
+                    DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                         SeeqSignalData = seeqSignalData,
-                        Connection = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.ReaderConfiguration.AssetPathSeparator,
                         SignalConfigurations = this.SignalConfigurations,
                         ScopedTo = this.ReaderConfiguration.ScopedTo
                     };
-                    DirectoryWatchUtilities.SendData(data);
+                    DirectoryWatchUtilities.SendSignalData(signalData);
                     seeqSignalData.Clear();
                 }
                 previousTimestamp = timestampIsoString;
             }
 
             if (seeqSignalData.Count > 0) {
-                DirectoryWatchData data = new DirectoryWatchData() {
+                DirectoryWatchSignalData signalData = new DirectoryWatchSignalData() {
                     SeeqSignalData = seeqSignalData,
-                    Connection = this.Connection,
+                    ConnectionService = this.ConnectionService,
                     Filename = filename,
                     PathSeparator = this.ReaderConfiguration.AssetPathSeparator,
                     SignalConfigurations = this.SignalConfigurations,
                     ScopedTo = this.ReaderConfiguration.ScopedTo
                 };
-                DirectoryWatchUtilities.SendData(data);
+                DirectoryWatchUtilities.SendSignalData(signalData);
             }
 
             parser.Close();
@@ -266,7 +266,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             // If any new signals were created, initiate a metadata sync.  In doing so, query Seeq for
             // all signals that match this datasource and simply return a count.
-            this.Connection.MetadataSync(SyncMode.Full);
         }
     }
 }

@@ -40,15 +40,15 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             }
             try {
                 if (this.ReaderConfiguration.UseFilePathForHierarchy) {
-                    IItemsApi itemsApi = this.Connection.AgentService.ApiProvider.CreateItemsApi();
+                    IItemsApi itemsApi = this.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
                     // Since DataID is ignored by appserver for storedInSeeq signals, we use description as a proxy for this
                     // for now.  This means the current version ignores the user-specified Description in the ConditionConfigurations
 
-                    IDatasourcesApi datasourcesApi = this.Connection.AgentService.ApiProvider.CreateDatasourcesApi();
-                    DatasourceOutputV1 datasourceOutput = DirectoryWatchUtilities.GetDirectoryWatchDatasource(this.Connection);
+                    IDatasourcesApi datasourcesApi = this.ConnectionService.AgentService.ApiProvider.CreateDatasourcesApi();
+                    DatasourceOutputV1 datasourceOutput = DirectoryWatchUtilities.GetDirectoryWatchDatasource(this.ConnectionService);
                     string datasourceId = datasourceOutput.Id;
-                    IAssetsApi assetsApi = this.Connection.AgentService.ApiProvider.CreateAssetsApi();
-                    ITreesApi treesApi = this.Connection.AgentService.ApiProvider.CreateTreesApi();
+                    IAssetsApi assetsApi = this.ConnectionService.AgentService.ApiProvider.CreateAssetsApi();
+                    ITreesApi treesApi = this.ConnectionService.AgentService.ApiProvider.CreateTreesApi();
 
                     string dataId = Utilities.DirectoryWatchUtilities.GuidifyString(this.ReaderConfiguration.FilePathHierarchyRoot);
 
@@ -417,7 +417,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                                 DataId = this.assetTreeRootDataId,
                                 Name = this.assetTreeRootName
                             },
-                            Connection = this.Connection,
+                            ConnectionService = this.ConnectionService,
                             Filename = filename,
                             PathSeparator = this.pathSeparator,
                             ConditionConfigurations = expandedConditionConfigurations
@@ -435,7 +435,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             DataId = this.assetTreeRootDataId,
                             Name = this.assetTreeRootName
                         },
-                        Connection = this.Connection,
+                        ConnectionService = this.ConnectionService,
                         Filename = filename,
                         PathSeparator = this.pathSeparator,
                         ConditionConfigurations = expandedConditionConfigurations
@@ -444,8 +444,6 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 }
 
                 log.InfoFormat("Completed reading all data from file {0}; sending data to Seeq database", filename);
-
-                this.Connection.MetadataSync(SyncMode.Full);
             } finally {
                 parser.Close();
                 parser.Dispose();

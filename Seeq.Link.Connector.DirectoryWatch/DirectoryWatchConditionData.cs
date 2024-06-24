@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Seeq.Sdk.Model;
 using Seeq.Link.Connector.DirectoryWatch.Config;
+using Seeq.Link.SDK.Interfaces;
 
 namespace Seeq.Link.Connector.DirectoryWatch {
 
@@ -20,7 +21,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
     /// </summary>
     public class DirectoryWatchConditionData {
         public string Filename { get; set; }
-        public DirectoryWatchConnection Connection { get; set; }
+        public IDatasourceConnectionServiceV2 ConnectionService { get; set; }
         public AssetOutputV1 AssetTreeRoot { get; set; }
         public string PathSeparator { get; set; }
         public List<ConditionConfigurationV1> ConditionConfigurations { get; set; }

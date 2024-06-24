@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Seeq.Link.Connector.DirectoryWatch.Config;
+using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
 
@@ -88,8 +89,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             }
         }
 
-        public static DatasourceOutputV1 GetDirectoryWatchDatasource(DirectoryWatchConnection connection) {
-            IDatasourcesApi datasourcesApi = connection.AgentService.ApiProvider.CreateDatasourcesApi();
+        public static DatasourceOutputV1 GetDirectoryWatchDatasource(IDatasourceConnectionServiceV2 connectionService) {
+            IDatasourcesApi datasourcesApi = connectionService.AgentService.ApiProvider.CreateDatasourcesApi();
             string directoryWatch = "DirectoryWatch";
             DatasourceOutputListV1 datasourceOutputList = datasourcesApi.GetDatasources(directoryWatch, directoryWatch, 0, 2, false);
             if (datasourceOutputList.Datasources.Count != 1) {
@@ -102,14 +103,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
         /// <summary>
         /// Creates or updates the root asset.
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name="connectionService"></param>
         /// <param name="rootAsset"></param>
         /// <returns>The AssetOutputV1 for the root asset</returns>
-        public static AssetOutputV1 SetRootAsset(DirectoryWatchConnection connection, string assetName, string scopedTo = null) {
+        public static AssetOutputV1 SetRootAsset(IDatasourceConnectionServiceV2 connectionService, string assetName, string scopedTo = null) {
             lock (lockObj) {
-                string datasourceId = GetDirectoryWatchDatasource(connection).Id;
-                IAssetsApi assetsApi = connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = connection.AgentService.ApiProvider.CreateTreesApi();
+                string datasourceId = GetDirectoryWatchDatasource(connectionService).Id;
+                IAssetsApi assetsApi = connectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = connectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 string dataId = GuidifyString(assetName);
 
@@ -142,7 +143,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             }
         }
 
-        public static bool SendData(DirectoryWatchData data, bool skipBadSamples = false, bool skipNullValueSamples = false, bool noTree = false) {
+        public static bool SendSignalData(DirectoryWatchSignalData signalData, bool skipBadSamples = false, bool skipNullValueSamples = false, bool noTree = false) {
             // Now that all prechecks have been passed, look up each signal configuration in Seeq.  If it exists, use it.
             // If not, create it.  Each signal has two custom properties that must be set:
             // DatastoreStatus and LastStoredTimestamp.  The former may be set to
@@ -165,18 +166,18 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             bool success = true;
 
             try {
-                IItemsApi itemsApi = data.Connection.AgentService.ApiProvider.CreateItemsApi();
-                ISignalsApi signalsApi = data.Connection.AgentService.ApiProvider.CreateSignalsApi();
+                IItemsApi itemsApi = signalData.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
+                ISignalsApi signalsApi = signalData.ConnectionService.AgentService.ApiProvider.CreateSignalsApi();
                 // Since DataID is ignored by appserver for storedInSeeq signals, we use description as a proxy for this
                 // for now.  This means the current version ignores the user-specified Description in the SignalConfigurations
 
-                IDatasourcesApi datasourcesApi = data.Connection.AgentService.ApiProvider.CreateDatasourcesApi();
+                IDatasourcesApi datasourcesApi = signalData.ConnectionService.AgentService.ApiProvider.CreateDatasourcesApi();
                 string syncToken = DateTime.UtcNow.ToString("o");
 
-                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.Connection);
+                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(signalData.ConnectionService);
                 string datasourceId = datasourceOutput.Id;
-                IAssetsApi assetsApi = data.Connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = data.Connection.AgentService.ApiProvider.CreateTreesApi();
+                IAssetsApi assetsApi = signalData.ConnectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = signalData.ConnectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 AssetBatchInputV1 assetBatchInput = new AssetBatchInputV1();
                 assetBatchInput.HostId = datasourceId;
@@ -190,18 +191,18 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                 assetTreeBatchInput.ChildHostId = datasourceId;
                 assetTreeBatchInput.Relationships = new List<AssetTreeSingleInputV1>();
 
-                if (data.ScopedTo != null) {
+                if (signalData.ScopedTo != null) {
                     Guid testGuid;
-                    if (!Guid.TryParse(data.ScopedTo, out testGuid)) {
-                        throw new ArgumentException($"ScopedTo parameter {data.ScopedTo} of DirectoryWatchData is not a valid GUID; " +
+                    if (!Guid.TryParse(signalData.ScopedTo, out testGuid)) {
+                        throw new ArgumentException($"ScopedTo parameter {signalData.ScopedTo} of DirectoryWatchData is not a valid GUID; " +
                             "please check the reader configuration and try again.");
                     }
                 }
 
-                foreach (string path in data.SeeqSignalData.Keys) {
-                    List<string> nodes = path.Split(new[] { data.PathSeparator }, StringSplitOptions.None).ToList();
-                    if (nodes.Count != path.Split(new[] { data.PathSeparator }, StringSplitOptions.RemoveEmptyEntries).ToList().Count) {
-                        log.Error($"Failed to create tree from path {path} due to repeated separator: {data.PathSeparator}");
+                foreach (string path in signalData.SeeqSignalData.Keys) {
+                    List<string> nodes = path.Split(new[] { signalData.PathSeparator }, StringSplitOptions.None).ToList();
+                    if (nodes.Count != path.Split(new[] { signalData.PathSeparator }, StringSplitOptions.RemoveEmptyEntries).ToList().Count) {
+                        log.Error($"Failed to create tree from path {path} due to repeated separator: {signalData.PathSeparator}");
                         success = false;
                         continue;
                     }
@@ -212,12 +213,12 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         partialPathGuid = GuidifyString(partialPath);
                         foreach (string node in nodes.Skip(1).Take(nodes.Count - 2)) {
                             string parentPathGuid = partialPathGuid;
-                            partialPath += data.PathSeparator + node;
+                            partialPath += signalData.PathSeparator + node;
                             partialPathGuid = GuidifyString(partialPath);
 
                             if (assetBatchInput.Assets.Exists(x => x.DataId == partialPathGuid) == false) {
                                 assetBatchInput.Assets.Add(
-                                    new PutAssetInputV1 { Name = node, HostId = datasourceId, DataId = partialPathGuid, SyncToken = syncToken, ScopedTo = data.ScopedTo });
+                                    new PutAssetInputV1 { Name = node, HostId = datasourceId, DataId = partialPathGuid, SyncToken = syncToken, ScopedTo = signalData.ScopedTo });
                                 assetTreeBatchInput.Relationships.Add(
                                     new AssetTreeSingleInputV1 { ParentDataId = parentPathGuid, ChildDataId = partialPathGuid });
                             }
@@ -232,11 +233,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         DatasourceId = datasourceOutput.DatasourceId,
                         SyncToken = syncToken,
                         DataId = pathGuid,
-                        ScopedTo = data.ScopedTo,
-                        Description = path + " (" + data.Connection.DatasourceId + " signal)",
-                        InterpolationMethod = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).InterpolationType,
-                        MaximumInterpolation = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).MaximumInterpolation,
-                        ValueUnitOfMeasure = data.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).Uom
+                        ScopedTo = signalData.ScopedTo,
+                        Description = path + " (" + datasourceId + " signal)",
+                        InterpolationMethod = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).InterpolationType,
+                        MaximumInterpolation = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).MaximumInterpolation,
+                        ValueUnitOfMeasure = signalData.SignalConfigurations.Find(x => x.NameInSeeq == seeqSignalName).Uom
                     };
                     putSignalsInput.Signals.Add(signalWithIdInput);
 
@@ -301,8 +302,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                     }
                 }
 
-                foreach (string seeqSignalPath in data.SeeqSignalData.Keys) {
-                    string seeqSignalName = seeqSignalPath.Substring(seeqSignalPath.LastIndexOf(data.PathSeparator) + data.PathSeparator.Length);
+                foreach (string seeqSignalPath in signalData.SeeqSignalData.Keys) {
+                    string seeqSignalName = seeqSignalPath.Substring(seeqSignalPath.LastIndexOf(signalData.PathSeparator) + signalData.PathSeparator.Length);
                     string seeqSignalId;
                     bool containsString = false;
                     bool containsNumeric = false;
@@ -331,7 +332,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
 
                     if (datastoreStatus == "Sealed") {
                         log.Warn($"A Sealed signal with description {seeqSignalPath} was found in file " +
-                            $"{data.Filename} and will be skipped");
+                            $"{signalData.Filename} and will be skipped");
                         continue;
                     }
                     if (datastoreStatus == "Reset") {
@@ -341,14 +342,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                     SamplesOverwriteInputV1 samplesInput = new SamplesOverwriteInputV1();
                     samplesInput.Samples = new List<SampleInputV1>();
                     string newLastCachedTimestamp = null;
-                    SampleInputV1 firstSample = data.SeeqSignalData[seeqSignalPath] != null
-                        && data.SeeqSignalData[seeqSignalPath].Count > 0 ? data.SeeqSignalData[seeqSignalPath][0] : null;
+                    SampleInputV1 firstSample = signalData.SeeqSignalData[seeqSignalPath] != null
+                        && signalData.SeeqSignalData[seeqSignalPath].Count > 0 ? signalData.SeeqSignalData[seeqSignalPath][0] : null;
                     if (firstSample != null && DateTime.Parse(firstSample.Key.ToString()) < DateTime.Parse(firstCachedTimestamp)) {
                         itemsApi.SetProperty(seeqSignalId, "FirstCachedTimestamp",
                             new PropertyInputV1 { Value = firstSample.Key.ToString(), UnitOfMeasure = "string" });
                     }
                     // Test if any samples are invalid and what kind of signal this is (string or numeric)
-                    foreach (SampleInputV1 seriesSample in data.SeeqSignalData[seeqSignalPath]) {
+                    foreach (SampleInputV1 seriesSample in signalData.SeeqSignalData[seeqSignalPath]) {
                         if (seriesSample.Value == null) {
                             if (!skipNullValueSamples) {
                                 samplesInput.Samples.Add(seriesSample);
@@ -405,7 +406,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                             new PropertyInputV1 { Value = datastoreStatus, UnitOfMeasure = "string" });
                 }
             } catch (Exception ex) {
-                log.Error($"Call to SendData for file {data.Filename} failed due to exception: {ex.Message}", ex);
+                log.Error($"Call to SendData for file {signalData.Filename} failed due to exception: {ex.Message}", ex);
                 success = false;
             }
             return success;
@@ -429,16 +430,16 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             bool success = true;
 
             try {
-                IItemsApi itemsApi = data.Connection.AgentService.ApiProvider.CreateItemsApi();
-                IConditionsApi conditionsApi = data.Connection.AgentService.ApiProvider.CreateConditionsApi();
+                IItemsApi itemsApi = data.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
+                IConditionsApi conditionsApi = data.ConnectionService.AgentService.ApiProvider.CreateConditionsApi();
                 // Since DataID is ignored by appserver for storedInSeeq signals, we use description as a proxy for this
                 // for now.  This means the current version ignores the user-specified Description in the SignalConfigurations
 
-                IDatasourcesApi datasourcesApi = data.Connection.AgentService.ApiProvider.CreateDatasourcesApi();
-                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.Connection);
+                IDatasourcesApi datasourcesApi = data.ConnectionService.AgentService.ApiProvider.CreateDatasourcesApi();
+                DatasourceOutputV1 datasourceOutput = GetDirectoryWatchDatasource(data.ConnectionService);
                 string datasourceId = datasourceOutput.Id;
-                IAssetsApi assetsApi = data.Connection.AgentService.ApiProvider.CreateAssetsApi();
-                ITreesApi treesApi = data.Connection.AgentService.ApiProvider.CreateTreesApi();
+                IAssetsApi assetsApi = data.ConnectionService.AgentService.ApiProvider.CreateAssetsApi();
+                ITreesApi treesApi = data.ConnectionService.AgentService.ApiProvider.CreateTreesApi();
 
                 AssetBatchInputV1 assetBatchInput = new AssetBatchInputV1();
                 assetBatchInput.HostId = datasourceId;
@@ -486,7 +487,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                         DatasourceClass = datasourceOutput.DatasourceClass,
                         DatasourceId = datasourceOutput.DatasourceId,
                         DataId = pathGuid,
-                        Description = path + " (" + data.Connection.DatasourceId + " Condition)",
+                        Description = path + " (" + datasourceId + " Condition)",
                         MaximumDuration = data.ConditionConfigurations.Find(x => x.ConditionName == seeqConditionName).MaximumDuration,
                     };
                     conditionBatchInput.Conditions.Add(conditionInput);
