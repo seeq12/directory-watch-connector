@@ -125,10 +125,9 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     var dir = directory.EndsWith("\\") ? directory : directory + "\\";
                     try {
                         if (Directory.Exists(dir)) {
-                            var maxFilesPerDirectory = this.connectionConfig.ReaderConfiguration.TryGetValue(nameof(BaseReaderConfig.MaxFilesPerDirectory),
-                                    out var configMaxFilesPerDir)
-                                ? configMaxFilesPerDir
-                                : "500";
+                            var maxFilesPerDirectory = this.connectionConfig.ReaderConfiguration
+                                .TryGetValue(nameof(BaseReaderConfig.MaxFilesPerDirectory), out var configMaxFilesPerDir)
+                                ? configMaxFilesPerDir : "500";
                             this.dataFileDirectoryMonitors[dir] =
                                 new DataFileDirectoryMonitor(dir, this.fileNameFilter, this.subdirectoryFilter, this.includeSubdirectories, this.reader, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1), maxFilesPerDirectory);
                             this.dataFileDirectoryMonitors[dir].Initialize();
@@ -139,10 +138,10 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                             break;
                         }
                     } catch (Exception ex) {
-                        string failedToConnect = string.Format("Failed to establish connection named {0} due to exception: {1}",
-                            this.connectionConfig.Name, ex.Message);
-                        log.Error(failedToConnect, ex);
-                        this.SetState(ConnectionState.DISCONNECTED, failedToConnect);
+                        var failedToConnect =
+                            $"Failed to establish connection named {this.connectionConfig.Name} due to exception: {ex.Message}";
+                        this.connectionService.Log.Error(failedToConnect, ex);
+                        this.connectionService.ConnectionState = ConnectionState.DISCONNECTED;
                         break;
                     }
                 }

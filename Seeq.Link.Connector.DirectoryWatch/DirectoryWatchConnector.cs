@@ -33,31 +33,25 @@ namespace Seeq.Link.Connector.DirectoryWatch {
 
             if (this.connectorConfig.FileReaderFolders == null || this.connectorConfig.FileReaderFolders.Count == 0) {
                 this.connectorConfig.FileReaderFolders = new List<string> { Path.Combine(DefaultConnectorPluginDir, "DataFileReaders") };
-            this.getDatasourceEventually(agentService);
-
-            if (this.Config.FileReaderFolders == null || this.Config.FileReaderFolders.Count == 0) {
-                this.Config.FileReaderFolders = new List<string> { @"C:\ProgramData\Seeq\data\plugins\connectors\DirectoryWatch\DataFileReaders" };
             }
 
-            if (this.Config.ConfigurationFolders == null || this.Config.ConfigurationFolders.Count == 0) {
-                this.Config.ConfigurationFolders = new List<string> { @"C:\ProgramData\Seeq\data\plugins\connectors\DirectoryWatch\Configurations" };
-                DirectoryWatchConnectionConfigV1 datasourceConfiguration = new DirectoryWatchConnectionConfigV1 {
+            if (this.connectorConfig.ConfigurationFolders == null || this.connectorConfig.ConfigurationFolders.Count == 0) {
+                this.connectorConfig.ConfigurationFolders = new List<string> { Path.Combine(DefaultConnectorPluginDir, "Configurations") };
+                var datasourceConfiguration = new DirectoryWatchConnectionConfigV1 {
                     Name = "Sample Configuration",
                     Id = "Some Unique Identifier",
                     Description = "A sample configuration.",
                     Enabled = false,
                     Reader = "Some Reader classname",
                     FileDirectories = new List<string> { @"Relative\Directory\Name", @"C:\Absolute\Directory\Name" },
-                    SignalConfigurations = new List<SignalConfigurationV1> {
-                            new SignalConfigurationV1() {
-                                NameInFile = "FileHeaderName",
-                                NameInSeeq = "SeeqSignalName",
-                                Description = "Some signal from some watched directory.",
-                                InterpolationType = "linear",
-                                MaximumInterpolation = "1 day",
-                                Uom = "Some Seeq-compatible UOM, such as m/s"
-                            }
-                        }
+                    SignalConfigurations = new List<SignalConfigurationV1> {new SignalConfigurationV1() {
+                            NameInFile = "FileHeaderName",
+                            NameInSeeq = "SeeqSignalName",
+                            Description = "Some signal from some watched directory.",
+                            InterpolationType = "linear",
+                            MaximumInterpolation = "1 day",
+                            Uom = "Some Seeq-compatible UOM, such as m/s"
+                        }}
                 };
                 this.connectionConfigs.Add(datasourceConfiguration);
                 // TODO, JamesPD, 15Nov2017: the above references to the program data folder need to be made relative to the actual data folder,
@@ -126,17 +120,17 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     this.connectorService.Log.Error($"Failed to get a list of files for specified configuration folder {configFolder}", ex);
                 }
                 if (fileList != null && fileList.Length > 0) {
-                    foreach (var filename in fileList) {
+                    foreach (var filePath in fileList) {
                         string json = null;
                         try {
-                            if (File.Exists(filename)) {
-                                json = File.ReadAllText(filename);
+                            if (File.Exists(filePath)) {
+                                json = File.ReadAllText(filePath);
                             }
                         } catch (Exception ex) {
-                            if (filename == null) {
-                                this.connectorService.Log.Error($"Could not resolve config file name \"{filename}\" to file path:\n{ex.Message}", ex);
+                            if (filePath == null) {
+                                this.connectorService.Log.Error($"Could not resolve config file name \"{filePath}\" to file path:\n{ex.Message}", ex);
                             } else {
-                                throw new IOException($"Could not read json file \"{filename}\" due to exception:\n{ex.Message}", ex);
+                                throw new IOException($"Could not read json file \"{filePath}\" due to exception:\n{ex.Message}", ex);
                             }
                         }
 
@@ -144,7 +138,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                         try {
                             config = (DirectoryWatchConnectionConfigV1)JsonConvert.DeserializeObject(json, typeof(DirectoryWatchConnectionConfigV1));
                         } catch (Exception e) {
-                            throw new IOException($"Could not deserialize json file \"{filename}\":\n{e}");
+                            throw new IOException($"Could not deserialize json file \"{filePath}\":\n{e}");
                         }
                         if (config != null) {
                             configs.Add(config);
