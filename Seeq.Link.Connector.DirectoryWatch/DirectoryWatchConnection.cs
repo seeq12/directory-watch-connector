@@ -129,7 +129,9 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                                 .TryGetValue(nameof(BaseReaderConfig.MaxFilesPerDirectory), out var configMaxFilesPerDir)
                                 ? configMaxFilesPerDir : "500";
                             this.dataFileDirectoryMonitors[dir] =
-                                new DataFileDirectoryMonitor(dir, this.fileNameFilter, this.subdirectoryFilter, this.includeSubdirectories, this.reader, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1), maxFilesPerDirectory);
+                                new DataFileDirectoryMonitor(dir, this.fileNameFilter, this.subdirectoryFilter,
+                                    this.includeSubdirectories, this.reader, TimeSpan.FromSeconds(5),
+                                    TimeSpan.FromSeconds(1), maxFilesPerDirectory);
                             this.dataFileDirectoryMonitors[dir].Initialize();
                         } else {
                             var failedToConnect = $"Failed to connect to directory {dir}";
