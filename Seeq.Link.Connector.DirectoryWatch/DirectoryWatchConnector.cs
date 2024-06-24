@@ -58,7 +58,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                 // and once this is done, the folders need to be created and the example configuration saved to the Configurations folder.
                 this.SaveConfig();
             } else {
-                this.connectionConfigs = readConfigFiles(this.connectorConfig.ConfigurationFolders);
+                this.connectionConfigs = this.readConfigFiles(this.connectorConfig.ConfigurationFolders);
                 var repeatedConfigIDs = this.connectionConfigs.GroupBy(x => x.Id).Where(x => x.Count() > 1);
 
                 if (repeatedConfigIDs.Any()) {
@@ -120,17 +120,17 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                     this.connectorService.Log.Error($"Failed to get a list of files for specified configuration folder {configFolder}", ex);
                 }
                 if (fileList != null && fileList.Length > 0) {
-                    foreach (var filename in fileList) {
+                    foreach (var filePath in fileList) {
                         string json = null;
                         try {
-                            if (File.Exists(filename)) {
-                                json = File.ReadAllText(filename);
+                            if (File.Exists(filePath)) {
+                                json = File.ReadAllText(filePath);
                             }
                         } catch (Exception ex) {
-                            if (filename == null) {
-                                this.connectorService.Log.Error($"Could not resolve config file name \"{filename}\" to file path:\n{ex.Message}", ex);
+                            if (filePath == null) {
+                                this.connectorService.Log.Error($"Could not resolve config file name \"{filePath}\" to file path:\n{ex.Message}", ex);
                             } else {
-                                throw new IOException($"Could not read json file \"{filename}\" due to exception:\n{ex.Message}", ex);
+                                throw new IOException($"Could not read json file \"{filePath}\" due to exception:\n{ex.Message}", ex);
                             }
                         }
 
@@ -138,7 +138,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
                         try {
                             config = (DirectoryWatchConnectionConfigV1)JsonConvert.DeserializeObject(json, typeof(DirectoryWatchConnectionConfigV1));
                         } catch (Exception e) {
-                            throw new IOException($"Could not deserialize json file \"{filename}\":\n{e}");
+                            throw new IOException($"Could not deserialize json file \"{filePath}\":\n{e}");
                         }
                         if (config != null) {
                             configs.Add(config);

@@ -5,39 +5,41 @@
   "Description": "Configuration for TimestampTagsCSV file reader.",
   "Enabled": true,
   "FileDirectories": [
-	  "C:\\SeeqDatasources\\TestData\\timestamp-tags-csv\\MyTabDelimitingGroup\\VeryImportantProject"
-  ],  
+    "C:\\SeeqDatasources\\TestData\\timestamp-tags-csv\\MyTabDelimitingGroup\\VeryImportantProject"
+  ],
   "IncludeSubdirectories": true,
   "FileNameFilter": ".*\\.csv$",
   "ReaderConfiguration": {
-	"UseFilePathForHierarchy": true,
-	"FilePathHierarchyRoot": "MyTabDelimitingGroup",
-	"FilePathHierarchyIncludesFilename": true,
-	"HeaderRow": "1",
-	"FirstDataRow": "2",
-	"TimestampHeaders": "Date-Time",
-	"TimestampFormat": "yyyy-MM-ddTHH:mm:ss",
-	"TimeZone": "+00:00",
-	"EnforceTimestampOrder": true,
-  "RecordsPerDataPacket": 1000,
-  "Delimiter": "\t"
+    "UseFilePathForHierarchy": true,
+    "FilePathHierarchyRoot": "MyTabDelimitingGroup",
+    "FilePathHierarchyIncludesFilename": true,
+    "HeaderRow": "1",
+    "FirstDataRow": "2",
+    "TimestampHeaders": "Date-Time",
+    "TimestampFormat": "yyyy-MM-ddTHH:mm:ss",
+    "TimeZone": "+00:00",
+    "EnforceTimestampOrder": true,
+    "RecordsPerDataPacket": 1000,
+    "Delimiter": "\t",
+    "MaxFilesPerDirectory": "500",
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
-	{
-	  "NameInFile": "/.*_Temperature/",
-	  "NameInSeeq": "Temperature",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1day",
-	  "Required": true
-	},
-	{
-	  "NameInFile": "/.*_Compressor_Power/",
-	  "NameInSeeq": "Compressor Power",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1day",
-	  "Required": true
-	}
+    {
+      "NameInFile": "/.*_Temperature/",
+      "NameInSeeq": "Temperature",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1day",
+      "Required": true
+    },
+    {
+      "NameInFile": "/.*_Compressor_Power/",
+      "NameInSeeq": "Compressor Power",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1day",
+      "Required": true
+    }
   ]
 }

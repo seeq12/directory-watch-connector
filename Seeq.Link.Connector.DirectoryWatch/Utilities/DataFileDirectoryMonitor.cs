@@ -23,13 +23,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
         private TimeSpan changeDebouncePeriod = TimeSpan.FromSeconds(1);
         private DirectoryInfo mainDirectoryInfo;
         private List<DirectoryInfo> directoryInfos;
+        private int maxFilesPerDir;
 
         private readonly object lockObj = new object();
 
-        public DataFileDirectoryMonitor() {
-        }
-
-        public DataFileDirectoryMonitor(string directory, Regex filenameRegex, Regex subdirectoryRegex, bool watchSubdirectories, DataFileReader reader, TimeSpan changePollingInterval, TimeSpan changeDebouncePeriod) {
+        public DataFileDirectoryMonitor(string directory, Regex filenameRegex, Regex subdirectoryRegex, bool watchSubdirectories, DataFileReader reader, TimeSpan changePollingInterval, TimeSpan changeDebouncePeriod, string maxFilesPerDir) {
             this.Directory = directory;
             this.filenameRegex = filenameRegex;
             this.subdirectoryRegex = subdirectoryRegex;
@@ -38,6 +36,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             this.dataFileReader = reader;
             this.changePollingInterval = changePollingInterval;
             this.changeDebouncePeriod = changeDebouncePeriod;
+            this.maxFilesPerDir = Convert.ToInt32(maxFilesPerDir);
 
             this.directoryInfos = new List<DirectoryInfo>();
             this.mainDirectoryInfo = new DirectoryInfo(this.Directory);
@@ -48,12 +47,13 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
                 foreach (FileInfo fileInfo in info.GetFiles()) {
                     if (filenameRegex.IsMatch(fileInfo.Name)) {
                         try {
-                            string modifiedFilename = Path.ChangeExtension(fileInfo.FullName, ".importing");
+                            var originalFileName = fileInfo.FullName;
+                            string modifiedFilename = Path.ChangeExtension(originalFileName, ".importing");
                             if (File.Exists(modifiedFilename)) {
                                 File.Delete(modifiedFilename);
                             }
-                            File.Move(fileInfo.FullName, modifiedFilename);
-                            dataFileReader.ReadFile(modifiedFilename);
+                            File.Move(originalFileName, modifiedFilename);
+                            dataFileReader.ValidateAndReadFile(originalFileName, modifiedFilename);
                             string importedFilename = Path.ChangeExtension(modifiedFilename, ".imported");
                             if (File.Exists(importedFilename)) {
                                 File.Delete(importedFilename);
@@ -106,6 +106,14 @@ namespace Seeq.Link.Connector.DirectoryWatch.Utilities {
             }
 
             foreach (DirectoryInfo directoryInfo in directoryInfos) {
+                // validate that we are not exceeding the file count limit
+                var directoryFileCount = directoryInfo.GetFiles().Length;
+
+                if (directoryFileCount > this.maxFilesPerDir) {
+                    log.ErrorFormat("Directory '{0}' has {1} files which exceeds the maximum allowed: {2}", directoryInfo.FullName, directoryFileCount, this.maxFilesPerDir);
+                    throw new InvalidOperationException("The number of files in the directory being read exceeds configured limits");
+                }
+                
                 this.directoryWatchAction(directoryInfo.FullName);
                 this.directoryWatchers.Add(directoryInfo.FullName, new DirectoryWatcher(directoryInfo.FullName, this, this.changePollingInterval, this.changeDebouncePeriod));
                 this.directoryWatchers[directoryInfo.FullName].Start();

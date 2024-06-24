@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Seeq.Link.Connector.DirectoryWatch.Config;
 
 namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
-    public class ConditionsWithPropertiesReaderConfigV1 {
+    public class ConditionsWithPropertiesReaderConfigV1 : BaseReaderConfig {
         public int HeaderRow { get; set; } //This is the 1-based row, counting from the first row of the CSV file, that contains the headers.
         public int FirstDataRow { get; set; }
         public string TimestampFormat { get; set; }
@@ -13,10 +14,9 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public string FilePathHierarchyRoot { get; set; }
         public bool FilePathHierarchyIncludesFilename { get; set; }
         public int RecordsPerDataPacket { get; set; }
-        public bool DebugMode { get; set; }
         public string Delimiter { get; set; }
 
-        public ConditionsWithPropertiesReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
+        public ConditionsWithPropertiesReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode): base(readerConfiguration, debugMode) {
             try {
                 this.DebugMode = debugMode;
                 this.HeaderRow = Convert.ToInt32(readerConfiguration["HeaderRow"]);
@@ -30,11 +30,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.FilePathHierarchyRoot = readerConfiguration["FilePathHierarchyRoot"];
                 this.FilePathHierarchyIncludesFilename = Convert.ToBoolean(readerConfiguration["FilePathHierarchyIncludesFilename"]);
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
-                } else {
-                    this.Delimiter = ",";
-                }
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());

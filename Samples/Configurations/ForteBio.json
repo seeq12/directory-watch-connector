@@ -5,90 +5,92 @@
   "Description": "Configuration for ForteBio file reader.",
   "Enabled": true,
   "FileDirectories": [
-	  "C:\\SeeqDatasources\\TestData\\timestamp-asset-tags-csv\\ForteBio Files"
+    "C:\\SeeqDatasources\\TestData\\timestamp-asset-tags-csv\\ForteBio Files"
   ],
   "IncludeSubdirectories": true,
   "FileNameFilter": ".*\\.csv$",
   "ReaderConfiguration": {
-	"DebugMode": false,
-	"Delimiter": ",",
-	"PostInvalidSamplesInsteadOfSkipping": false,
-	"HeaderRow": "2",
-	"FirstDataRow": "3",
-	"TimestampHeaders": "Sample Date",
-	"TimestampFormat": "M/d/yyyy",
-	"TimeZone": null,
-	"EnforceTimestampOrder": false,
-	"RecordsPerDataPacket": 10,	
-	"AssetTreeRootName": "Projects",
-	"AssetPathSeparator": "|",
-	"AssetPathHeaders": "Project ID"
+    "DebugMode": false,
+    "Delimiter": ",",
+    "PostInvalidSamplesInsteadOfSkipping": false,
+    "HeaderRow": "2",
+    "FirstDataRow": "3",
+    "TimestampHeaders": "Sample Date",
+    "TimestampFormat": "M/d/yyyy",
+    "TimeZone": null,
+    "EnforceTimestampOrder": false,
+    "RecordsPerDataPacket": 10,
+    "AssetTreeRootName": "Projects",
+    "AssetPathSeparator": "|",
+    "AssetPathHeaders": "Project ID",
+    "MaxFilesPerDirectory": "500",
+    "MaxFileSizeInKB": "5120"
   },
   "SignalConfigurations": [
-	{
-	  "NameInFile": "Plate",
-	  "NameInSeeq": "Plate",
-	  "Uom": null,
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description": "Analyzer machine name"
-	},
-	{
-	  "NameInFile": "Sample",
-	  "NameInSeeq": "Sample",
-	  "Uom": null,
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Well Type",
-	  "NameInSeeq": "Well Type",
-	  "Uom": "string",
-	  "InterpolationType": "step",
-	  "MaximumInterpolation": "1week",
-	  "Description": null,
-	  "Required": false
-	},
-	{
-	  "NameInFile": "Known Conc. (ug/ml)",
-	  "NameInSeeq": "Known Conc.",
-	  "Uom": "microg/mL",
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Binding Rate",
-	  "NameInSeeq": "Binding Rate",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Calc. Conc. (ug/ml)",
-	  "NameInSeeq": "Calc. Conc.",
-	  "Uom": "microg/mL",
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "Residual(%)",
-	  "NameInSeeq": "Residual",
-	  "Uom": "%",
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	},
-	{
-	  "NameInFile": "R Square",
-	  "NameInSeeq": "R Square",
-	  "Uom": null,
-	  "InterpolationType": "linear",
-	  "MaximumInterpolation": "1week",
-	  "Description": null
-	}
+    {
+      "NameInFile": "Plate",
+      "NameInSeeq": "Plate",
+      "Uom": null,
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": "Analyzer machine name"
+    },
+    {
+      "NameInFile": "Sample",
+      "NameInSeeq": "Sample",
+      "Uom": null,
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Well Type",
+      "NameInSeeq": "Well Type",
+      "Uom": "string",
+      "InterpolationType": "step",
+      "MaximumInterpolation": "1week",
+      "Description": null,
+      "Required": false
+    },
+    {
+      "NameInFile": "Known Conc. (ug/ml)",
+      "NameInSeeq": "Known Conc.",
+      "Uom": "microg/mL",
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Binding Rate",
+      "NameInSeeq": "Binding Rate",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Calc. Conc. (ug/ml)",
+      "NameInSeeq": "Calc. Conc.",
+      "Uom": "microg/mL",
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "Residual(%)",
+      "NameInSeeq": "Residual",
+      "Uom": "%",
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    },
+    {
+      "NameInFile": "R Square",
+      "NameInSeeq": "R Square",
+      "Uom": null,
+      "InterpolationType": "linear",
+      "MaximumInterpolation": "1week",
+      "Description": null
+    }
   ]
 }

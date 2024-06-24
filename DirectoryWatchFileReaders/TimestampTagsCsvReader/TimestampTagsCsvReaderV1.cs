@@ -7,28 +7,24 @@ using Microsoft.VisualBasic.FileIO;
 using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Model;
 
 namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
     public class TimestampTagsCsvReaderV1 : DataFileReader {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly object lockObj = new object();
 
         private string pathSeparator = @"\";
-
         private AssetOutputV1 rootAsset;
-
         private CultureInfo cultureInfo;
 
-        public TimestampTagsCsvReaderConfigV1 ReaderConfiguration { get; set; }
+        private TimestampTagsCsvReaderConfigV1 ReaderConfiguration  => this.ReaderConfig as TimestampTagsCsvReaderConfigV1;
 
         public string Name { get; set; }
 
         public TimestampTagsCsvReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode = false) {
             try {
-                this.ReaderConfiguration = new TimestampTagsCsvReaderConfigV1(readerConfiguration, debugMode);
+                this.ReaderConfig = new TimestampTagsCsvReaderConfigV1(readerConfiguration, debugMode);
             } catch (Exception ex) {
                 log.Error($"Failed to configure TimestampTagsCsvReaderV1 due to exception: {ex.Message}", ex);
             }
@@ -86,7 +82,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     }
                 } catch (Exception ex) {
                     log.Error($"Failed to create asset path for file {filename} due to exception: {ex.Message}", ex);
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -125,10 +121,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             foreach (string timestampHeader in this.ReaderConfiguration.TimestampHeaders.Split(',')) {
                 try {
                     timestampHeaderIndices.Add(DirectoryWatchUtilities.GetHeaderIndex(timestampHeader.Trim(), headers));
-                } catch (Exception ex) {
+                } catch (Exception) {
                     parser.Close();
                     parser.Dispose();
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -137,11 +133,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 string signalNameInFile = signalConfig.NameInFile;
                 try {
                     signalHeaderIndices[signalNameInFile] = DirectoryWatchUtilities.GetHeaderIndex(signalNameInFile, headers);
-                } catch (Exception ex) {
+                } catch (Exception) {
                     if (signalConfig.Required) {
                         parser.Close();
                         parser.Dispose();
-                        throw ex;
+                        throw;
                     }
                 }
             }

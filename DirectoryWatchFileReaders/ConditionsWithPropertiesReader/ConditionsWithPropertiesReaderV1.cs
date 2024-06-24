@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
@@ -17,17 +16,16 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         private readonly object lockObj = new object();
 
         private string pathSeparator = @"\";
-
         private string assetTreeRootDataId;
         private string assetTreeRootName;
 
-        public ConditionsWithPropertiesReaderConfigV1 ReaderConfiguration { get; set; }
+        public ConditionsWithPropertiesReaderConfigV1 ReaderConfiguration => this.ReaderConfig as ConditionsWithPropertiesReaderConfigV1;
 
         public string Name { get; set; }
 
         public ConditionsWithPropertiesReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode = false) {
             try {
-                this.ReaderConfiguration = new ConditionsWithPropertiesReaderConfigV1(readerConfiguration, debugMode);
+                this.ReaderConfig = new ConditionsWithPropertiesReaderConfigV1(readerConfiguration, debugMode);
             } catch (Exception ex) {
                 log.Error($"Failed to configure ConditionsWithPropertiesReaderV1 due to exception: {ex.Message}", ex);
             }
@@ -173,7 +171,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 } catch (Exception ex) {
                     log.ErrorFormat("Failed to create asset path for file {0} due to exception: {1}",
                         filename, ex.Message);
-                    throw ex;
+                    throw;
                 }
             }
 

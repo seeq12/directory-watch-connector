@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Seeq.Link.Connector.DirectoryWatch.Config;
 
 namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
-    public class NarrowFileReaderConfigV1 {
+    public class NarrowFileReaderConfigV1 : BaseReaderConfig {
         public int HeaderRow { get; set; } //This is the 1-based row, counting from the first row of the CSV file, that contains the headers.
         public int FirstDataRow { get; set; }
         public string TimestampHeaders { get; set; }
@@ -14,12 +15,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         public string SignalPrefixForDisambiguation { get; set; }
         public string ValueHeader { get; set; }
         public int RecordsPerDataPacket { get; set; }
-        public bool DebugMode { get; set; }
         public string Delimiter { get; set; }
         public string CultureInfo { get; set; }
         public bool PostInvalidSamplesInsteadOfSkipping { get; set; }
 
-        public NarrowFileReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
+        public NarrowFileReaderConfigV1(Dictionary<string, string> readerConfiguration, bool debugMode): base(readerConfiguration, debugMode) {
             try {
                 this.DebugMode = debugMode;
                 this.HeaderRow = Convert.ToInt32(readerConfiguration["HeaderRow"]);
@@ -34,14 +34,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 this.SignalPrefixForDisambiguation = readerConfiguration.ContainsKey("SignalPrefixForDisambiguation") ? readerConfiguration["SignalPrefixForDisambiguation"] : "";
                 this.ValueHeader = readerConfiguration["ValueHeader"];
                 this.RecordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (readerConfiguration.ContainsKey("Delimiter")) {
-                    this.Delimiter = readerConfiguration["Delimiter"];
-                } else {
-                    this.Delimiter = ",";
-                }
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfiguration.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfiguration["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.CultureInfo = readerConfiguration.ContainsKey("CultureInfo") ? readerConfiguration["CultureInfo"] : null;
+
+                this.Delimiter = this.getValueOrDefault(readerConfiguration, nameof(this.Delimiter), ",");
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfiguration, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.CultureInfo = this.getValueOrDefault<string>(readerConfiguration, nameof(this.CultureInfo), null);
             } catch (KeyNotFoundException ex) {
                 string readerConfigDict = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
                 string readerConfigDef = string.Join(",\n", this.GetType().GetProperties().ToList());

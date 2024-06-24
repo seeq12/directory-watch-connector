@@ -4,15 +4,10 @@ using Seeq.Link.SDK;
 namespace Seeq.Link.Connector.DirectoryWatch.Config {
 
     public class DirectoryWatchConnectorConfigV1 : ConfigObject {
-        public bool DebugMode;
-        public List<string> FileReaderFolders;
-        public List<string> ConfigurationFolders;
+        public bool DebugMode { get; set; } = false;
 
-        public List<DirectoryWatchConnectionConfigV1> DatasourceConfigurations;
+        public List<string> FileReaderFolders { get; set; }
 
-        public DirectoryWatchConnectorConfigV1() {
-            this.DebugMode = false;
-            this.DatasourceConfigurations = new List<DirectoryWatchConnectionConfigV1>();
-        }
+        public List<string> ConfigurationFolders { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Seeq.Link.Connector.DirectoryWatch.Config;
 
 namespace OffsetTagsReader {
 
-    internal class OffsetTagsReaderConfig {
+    internal class OffsetTagsReaderConfig : BaseReaderConfig {
         public string AssetTreeRootName { get; private set; }
 
         public string TimeZone { get; private set; }
@@ -34,7 +35,7 @@ namespace OffsetTagsReader {
         public int RecordsPerDataPacket { get; private set; }
         public string ScopedTo { get; set; }
 
-        public OffsetTagsReaderConfig(Dictionary<string, string> readerConfig) {
+        public OffsetTagsReaderConfig(Dictionary<string, string> readerConfig): base(readerConfig, false) {
             try {
                 this.AssetTreeRootName = readerConfig["AssetTreeRootName"];
                 if (string.IsNullOrWhiteSpace(this.AssetTreeRootName)) {
@@ -87,10 +88,10 @@ namespace OffsetTagsReader {
                         throw new ArgumentException("Configuration file cannot include specifications for " +
                             "FilenameDateCaptureRegex or FilenameDateFormatString if FixedBaseTime is also specified");
                     }
-                    DateTime dt;
-                    if (!DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ssK", null, System.Globalization.DateTimeStyles.None, out dt) &&
-                        !DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ss.fffK", null, System.Globalization.DateTimeStyles.None, out dt) &&
-                        !DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ss.fffffffK", null, System.Globalization.DateTimeStyles.None, out dt)) {
+
+                    if (!DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ssK", null, System.Globalization.DateTimeStyles.None, out _) &&
+                        !DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ss.fffK", null, System.Globalization.DateTimeStyles.None, out _) &&
+                        !DateTime.TryParseExact(this.FixedBaseTime, "yyyy-MM-ddTHH:mm:ss.fffffffK", null, System.Globalization.DateTimeStyles.None, out _)) {
                         throw new ArgumentException("FixedBaseTime must be in ISO8601 format and have 0, 3, or 7 decimal digits, e.g., 2018-11-02T16:02:43.1234567.");
                     }
                 }
@@ -106,9 +107,8 @@ namespace OffsetTagsReader {
 
                 this.RecordsPerDataPacket = readerConfig.ContainsKey("RecordsPerDataPacket") ?
                     Convert.ToInt32(readerConfig["RecordsPerDataPacket"]) : 1000;
-                this.PostInvalidSamplesInsteadOfSkipping = readerConfig.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfig["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.ScopedTo = readerConfig.ContainsKey("ScopedTo") ? readerConfig["ScopedTo"] : null;
+                this.PostInvalidSamplesInsteadOfSkipping = this.getValueOrDefault(readerConfig, nameof(this.PostInvalidSamplesInsteadOfSkipping), false);
+                this.ScopedTo = this.getValueOrDefault<string>(readerConfig, nameof(this.ScopedTo), null);
             } catch (KeyNotFoundException) {
                 string configStr = string.Join(",\n  ", this.GetType().GetProperties().ToList());
                 string readerConfigString = string.Join(",\n  ", readerConfig.Select(x => x.Key + ": " + x.Value));

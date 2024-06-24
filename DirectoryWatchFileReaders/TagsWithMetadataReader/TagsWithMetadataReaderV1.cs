@@ -8,7 +8,6 @@ using Microsoft.VisualBasic.FileIO;
 using Seeq.Link.Connector.DirectoryWatch.Config;
 using Seeq.Link.Connector.DirectoryWatch.Interfaces;
 using Seeq.Link.Connector.DirectoryWatch.Utilities;
-using Seeq.Link.SDK.Interfaces;
 using Seeq.Sdk.Api;
 using Seeq.Sdk.Model;
 
@@ -17,134 +16,31 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
     public class TagsWithMetadataReaderV1 : DataFileReader {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private int headerRow; //This is the 1-based row, counting from the first row of the CSV file, that contains the headers.
-
-        private enum MetadataRow { UOM, InterpolationType, MaximumInterpolation, Description, Headers }
-
-        private Dictionary<long, MetadataRow> metadataRows;
-        private Dictionary<MetadataRow, string> metadataDefaults;
-
         private AssetOutputV1 rootAsset;
-
-        private int? uomRow;
-        private int? interpTypeRow;
-        private string interpTypeDefault;
-        private string maxInterpDefault;
-        private int? maxInterpRow;
-        private int? descriptionRow;
-        private int firstDataRow;
-        private string timestampFormat;
-        private string timeZone;
-        private bool enforceTimestampOrder;
-        private bool useFilePathForHierarchy;
-        private string filePathHierarchyRoot;
-        private bool filePathHierarchyIncludesFilename;
-        private string pathSeparator = @"\";
-        private bool postInvalidSamplesInsteadOfSkipping;
-        private int recordsPerDataPacket;
         private bool debugMode;
-        private string scopedTo;
-        private string filenameRegexScopeCapture;
-        private string cultureInfoString;
-        private string delimiter;
+
+        private TagsWithMetadataReaderConfigV1 ReaderConfiguration => this.ReaderConfig as TagsWithMetadataReaderConfigV1;
 
         public string Name { get; set; }
 
         public TagsWithMetadataReaderV1(Dictionary<string, string> readerConfiguration, bool debugMode) {
             try {
-                this.debugMode = debugMode;
-
-                this.metadataRows = new Dictionary<long, MetadataRow>() {
-                    { Convert.ToInt32(readerConfiguration["NameRow"]), MetadataRow.Headers }
-                };
-                if (readerConfiguration.ContainsKey("UOMRow")) {
-                    this.metadataRows.Add(Convert.ToInt32(readerConfiguration["UOMRow"]), MetadataRow.UOM);
-                }
-                if (readerConfiguration.ContainsKey("InterpStyleRow")) {
-                    this.metadataRows.Add(Convert.ToInt32(readerConfiguration["InterpStyleRow"]), MetadataRow.InterpolationType);
-                }
-                if (readerConfiguration.ContainsKey("MaxInterpRow")) {
-                    this.metadataRows.Add(Convert.ToInt32(readerConfiguration["MaxInterpRow"]), MetadataRow.MaximumInterpolation);
-                }
-                if (readerConfiguration.ContainsKey("DescriptionRow")) {
-                    this.metadataRows.Add(Convert.ToInt32(readerConfiguration["DescriptionRow"]), MetadataRow.Description);
-                }
-
-                this.metadataDefaults = new Dictionary<MetadataRow, string>();
-                this.metadataDefaults.Add(MetadataRow.MaximumInterpolation,
-                    readerConfiguration.ContainsKey("DefaultMaxInterp") ? readerConfiguration["DefaultMaxInterp"] :
-                    null);
-                this.metadataDefaults.Add(MetadataRow.InterpolationType,
-                    readerConfiguration.ContainsKey("DefaultInterpType") ? readerConfiguration["DefaultInterpType"] :
-                    null);
-                this.metadataDefaults.Add(MetadataRow.UOM,
-                    readerConfiguration.ContainsKey("DefaultUOM") ? readerConfiguration["DefaultUOM"] :
-                    null);
-                this.metadataDefaults.Add(MetadataRow.Description,
-                    readerConfiguration.ContainsKey("DefaultDescription") ? readerConfiguration["DefaultDescription"] :
-                    null);
-
-                this.headerRow = Convert.ToInt32(readerConfiguration["NameRow"]);
-                this.firstDataRow = Convert.ToInt32(readerConfiguration["FirstDataRow"]); // Moved to top for clarity, since it's required
-                this.uomRow = readerConfiguration.ContainsKey("UOMRow") ? // Cnanged the int to int?, which is shorthand for Nullable<int>,
-                    Convert.ToInt32(readerConfiguration["UOMRow"]) :      // meaning it .HasValue (or not); the value can be accessed using .Value
-                    (int?)null;
-                this.interpTypeRow = readerConfiguration.ContainsKey("InterpStyleRow") ? // same
-                    Convert.ToInt32(readerConfiguration["InterpStyleRow"]) :             // multilined for readability
-                    (int?)null;
-                this.maxInterpRow = readerConfiguration.ContainsKey("MaxInterpRow") ? // same
-                    Convert.ToInt32(readerConfiguration["MaxInterpRow"]) :
-                    (int?)null;
-                this.descriptionRow = readerConfiguration.ContainsKey("DescriptionRow") ? // same
-                    Convert.ToInt32(readerConfiguration["DescriptionRow"]) :
-                    (int?)null;
-                this.maxInterpDefault = readerConfiguration["DefaultMaxInterp"];
-                this.interpTypeDefault = readerConfiguration["DefaultInterpType"];
-                this.recordsPerDataPacket = Convert.ToInt32(readerConfiguration["RecordsPerDataPacket"]);
-                if (this.headerRow >= this.firstDataRow) {
-                    throw new ArgumentException("FirstDataRow must be greater than NameRow.");
-                }
-                this.timestampFormat = readerConfiguration["TimestampFormat"];
-                this.timeZone = readerConfiguration["TimeZone"];
-                if (bool.TryParse(readerConfiguration["EnforceTimestampOrder"], out this.enforceTimestampOrder) == false) {
-                    this.enforceTimestampOrder = true;
-                };
-                this.useFilePathForHierarchy = Convert.ToBoolean(readerConfiguration["UseFilePathForHierarchy"]);
-                this.filePathHierarchyRoot = readerConfiguration["FilePathHierarchyRoot"];
-                this.filePathHierarchyIncludesFilename = Convert.ToBoolean(readerConfiguration["FilePathHierarchyIncludesFilename"]);
-                this.postInvalidSamplesInsteadOfSkipping = readerConfiguration.ContainsKey("PostInvalidSamplesInsteadOfSkipping") ?
-                    Convert.ToBoolean(readerConfiguration["PostInvalidSamplesInsteadOfSkipping"]) : false;
-                this.scopedTo = readerConfiguration.ContainsKey("ScopedTo") ? readerConfiguration["ScopedTo"] : null;
-                this.filenameRegexScopeCapture = readerConfiguration.ContainsKey("FilenameRegexScopeCapture") ?
-                    readerConfiguration["FilenameRegexScopeCapture"] : null;
-                if (this.scopedTo != null && this.filenameRegexScopeCapture != null) {
-                    throw new ArgumentException("ScopedTo and FilenameRegexScopeCapture cannot both be non-null.");
-                }
-                this.cultureInfoString = readerConfiguration.ContainsKey("CultureInfo") ?
-                    readerConfiguration["CultureInfo"] : null;
-                this.delimiter = readerConfiguration.ContainsKey("Delimiter") ?
-                    readerConfiguration["Delimiter"] : ",";
-            } catch (ArgumentException ax) {
-                log.Error(ax.Message, ax);
-                throw;
+                this.ReaderConfig = new TagsWithMetadataReaderConfigV1(readerConfiguration, debugMode);
+                this.debugMode = this.ReaderConfiguration.DebugMode;
             } catch (Exception ex) {
-                string readerConfig = string.Join(",\n", readerConfiguration.Select(x => x.Key + ": " + x.Value));
-                log.Error($"Failed to create TimestampTagsCsvReader due to exception: {ex.Message}\n" +
-                    "The reader is expecting the following values for the configuration: TimestampHeader, TimestampFormat, HeaderRow, " +
-                    "FirstDataRow, TimeZone, EnforceTimestampOrder, UseFilePathForHierarchy, FilePathHierarchyRoot, and FilePathHierarchyIncludesFilename.\n" +
-                    "The reader configuration found in the config file was as follows:\n{readerConfig}", ex);
-                throw;
+                log.Error($"Failed to configure TagsWithMetadataReaderConfigV1 due to exception: {ex.Message}", ex);
             }
         }
 
         // This method should only be used for setting up things that are common to all files;
         // therefore there is no dependence on the filenames of the files being read.
         public override bool Initialize() {
-            if (debugMode) {
+            if (this.debugMode) {
                 System.Diagnostics.Debugger.Launch();
             }
+
             try {
-                if (this.useFilePathForHierarchy) {
+                if (this.ReaderConfiguration.UseFilePathForHierarchy) {
                     IItemsApi itemsApi = this.ConnectionService.AgentService.ApiProvider.CreateItemsApi();
                     ISignalsApi signalsApi = this.ConnectionService.AgentService.ApiProvider.CreateSignalsApi();
                     UsersApi usersApi = new UsersApi(signalsApi.Configuration.ApiClient);
@@ -157,7 +53,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                             "used until the agent_api_key user is granted admin status by an existing Seeq Administrator" +
                             "through the API Reference.");
                     }
-                    rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, this.filePathHierarchyRoot, this.scopedTo);
+                    this.rootAsset = DirectoryWatchUtilities.SetRootAsset(this.ConnectionService, this.ReaderConfiguration.FilePathHierarchyRoot, this.ReaderConfiguration.ScopedTo);
                 } else {
                     throw new ArgumentException("UseFilePathForHierarchy must be true for TagsWithMetadataReader");
                 }
@@ -169,9 +65,10 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
         }
 
         public override void ReadFile(string filename) {
-            if (debugMode) {
+            if (this.debugMode) {
                 System.Diagnostics.Debugger.Launch();
             }
+
             log.Info($"Method ReadFile called for file {filename}");
 
             // Prechecks:  ensure the signal configurations all exist as columns in the file,
@@ -180,39 +77,39 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             string fileScopedTo;
 
-            if (this.filenameRegexScopeCapture != null) {
-                Regex regex = new Regex(this.filenameRegexScopeCapture);
+            if (this.ReaderConfiguration.FilenameRegexScopeCapture != null) {
+                Regex regex = new Regex(this.ReaderConfiguration.FilenameRegexScopeCapture);
                 try {
                     MatchCollection matches = regex.Matches(filename);
                     if (matches.Count == 1) {
                         if (matches[0].Groups.Count == 2) {
                             fileScopedTo = matches[0].Groups[1].Value;
                         } else {
-                            throw new ArgumentException($"Regex {filenameRegexScopeCapture} found more than one capture for filename {filename}");
+                            throw new ArgumentException($"Regex {this.ReaderConfiguration.FilenameRegexScopeCapture} found more than one capture for filename {filename}");
                         }
                     } else {
-                        throw new ArgumentException($"Regex {filenameRegexScopeCapture} found more than one match for filename {filename}");
+                        throw new ArgumentException($"Regex {this.ReaderConfiguration.FilenameRegexScopeCapture} found more than one match for filename {filename}");
                     }
                 } catch {
-                    log.Error($"Failed to use regex {filenameRegexScopeCapture} of Reader configuration to capture the Workbook Scope for file {filename}.");
+                    log.Error($"Failed to use regex {this.ReaderConfiguration.FilenameRegexScopeCapture} of Reader configuration to capture the Workbook Scope for file {filename}.");
                     throw;
                 }
             } else {
-                fileScopedTo = this.scopedTo;
+                fileScopedTo = this.ReaderConfiguration.ScopedTo;
             }
 
             string assetPath = "";
-            if (this.useFilePathForHierarchy) {
+            if (this.ReaderConfiguration.UseFilePathForHierarchy) {
                 try {
-                    assetPath = filename.Substring(filename.LastIndexOf(this.filePathHierarchyRoot));
-                    if (this.filePathHierarchyIncludesFilename) {
+                    assetPath = filename.Substring(filename.LastIndexOf(this.ReaderConfiguration.FilePathHierarchyRoot));
+                    if (this.ReaderConfiguration.FilePathHierarchyIncludesFilename) {
                         assetPath = assetPath.Substring(0, assetPath.LastIndexOf('.'));
                     } else {
                         assetPath = assetPath.Substring(0, assetPath.LastIndexOf('\\'));
                     }
                 } catch (Exception ex) {
                     log.Error($"Failed to create asset path for file {filename} due to exception: {ex.Message}", ex);
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -220,13 +117,13 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             try {
                 parser = new TextFieldParser(filename);
                 parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(this.delimiter);
+                parser.SetDelimiters(this.ReaderConfiguration.Delimiter);
                 parser.TrimWhiteSpace = false;
             } catch (Exception ex) {
                 string errMsg = string.Format("Failed to open CSV parser in DateTimeTagsCsvReader for file: {0} due to exception {1}", filename, ex.Message);
                 throw new Exception(errMsg);
             }
-            long firstMetadataRow = this.metadataRows.Keys.Min();
+            long firstMetadataRow = this.ReaderConfiguration.MetadataRows.Keys.Min();
             for (int i = 1; i < firstMetadataRow; i++) {
                 if (parser.EndOfData == false) {
                     parser.ReadLine(); // We ignore everything before the first row of interest row
@@ -240,26 +137,20 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
 
             int timestampHeaderIndex = 0;
 
-            //create dictionary for each, or add to dictionary? imagine dictionary where each item has all signalConfiguration? I think I like this
-            // yes!
-            Dictionary<MetadataRow, List<string>> metadata = new Dictionary<MetadataRow, List<string>>();
-            foreach (MetadataRow row in ((MetadataRow[])Enum.GetValues(typeof(MetadataRow)))) {
+            Dictionary<TagsWithMetadataReaderConfigV1.MetadataRow, List<string>> metadata = new Dictionary<TagsWithMetadataReaderConfigV1.MetadataRow, List<string>>();
+            foreach (TagsWithMetadataReaderConfigV1.MetadataRow row in ((TagsWithMetadataReaderConfigV1.MetadataRow[])Enum.GetValues(typeof(TagsWithMetadataReaderConfigV1.MetadataRow)))) {
                 metadata.Add(row, null);
             }
-            //List<string> headers = new List<string> { };
-            //List<string> eachUOM = new List<string> { };
-            //List<string> eachInterpType = new List<string> { };
-            //List<string> eachMaxInterp = new List<string> { };
-            //List<string> eachDescription = new List<string> { };
-            //populate lists in order discovered
-            for (long i = firstMetadataRow; i < firstDataRow; i++) {
+
+            // populate lists in order discovered
+            for (long i = firstMetadataRow; i < this.ReaderConfiguration.FirstDataRow; i++) {
                 if (parser.EndOfData == false) {
-                    if (this.metadataRows.ContainsKey(parser.LineNumber)) {
-                        MetadataRow metadataRow = this.metadataRows[parser.LineNumber];
+                    if (this.ReaderConfiguration.MetadataRows.ContainsKey(parser.LineNumber)) {
+                        TagsWithMetadataReaderConfigV1.MetadataRow metadataRow = this.ReaderConfiguration.MetadataRows[parser.LineNumber];
                         List<string> metadataForRow = parser.ReadFields().ToList();
                         metadata[metadataRow] =
                             metadataForRow.Select(x => string.IsNullOrEmpty(x)
-                              ? this.metadataDefaults[metadataRow] : x
+                              ? this.ReaderConfiguration.MetadataDefaults[metadataRow] : x
                             ).ToList();
                     } else {
                         // throw it away!
@@ -274,9 +165,9 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             }
 
             // Create a list populated entirely by default values if no values already exist
-            foreach (MetadataRow key in metadata.Keys.ToArray()) {
+            foreach (TagsWithMetadataReaderConfigV1.MetadataRow key in metadata.Keys.ToArray()) {
                 if (metadata[key] == null) {
-                    metadata[key] = metadata[MetadataRow.Headers].Select(x => metadataDefaults[key]).ToList();
+                    metadata[key] = metadata[TagsWithMetadataReaderConfigV1.MetadataRow.Headers].Select(x => this.ReaderConfiguration.MetadataDefaults[key]).ToList();
                 }
             }
 
@@ -285,7 +176,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             List<SignalConfigurationV1> signalConfigurations = new List<SignalConfigurationV1>();
             int count = 0;
             var dupcheck = new HashSet<string>();
-            foreach (var signalHeader in metadata[MetadataRow.Headers]) {
+            foreach (var signalHeader in metadata[TagsWithMetadataReaderConfigV1.MetadataRow.Headers]) {
                 SignalConfigurationV1 signalConfiguration = new SignalConfigurationV1();
                 //check for duplicate headers
                 if (!dupcheck.Add(signalHeader)) {
@@ -301,17 +192,17 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     signalConfiguration.NameInSeeq = signalHeader;
                     signalConfiguration.NameInFile = signalHeader;
 
-                    if (metadata.ContainsKey(MetadataRow.Description)) {
-                        signalConfiguration.Description = metadata[MetadataRow.Description][count];
+                    if (metadata.ContainsKey(TagsWithMetadataReaderConfigV1.MetadataRow.Description)) {
+                        signalConfiguration.Description = metadata[TagsWithMetadataReaderConfigV1.MetadataRow.Description][count];
                     }
-                    if (metadata.ContainsKey(MetadataRow.UOM)) {
-                        signalConfiguration.Uom = metadata[MetadataRow.UOM][count];
+                    if (metadata.ContainsKey(TagsWithMetadataReaderConfigV1.MetadataRow.UOM)) {
+                        signalConfiguration.Uom = metadata[TagsWithMetadataReaderConfigV1.MetadataRow.UOM][count];
                     }
-                    if (metadata.ContainsKey(MetadataRow.MaximumInterpolation)) {
-                        signalConfiguration.MaximumInterpolation = metadata[MetadataRow.MaximumInterpolation][count];
+                    if (metadata.ContainsKey(TagsWithMetadataReaderConfigV1.MetadataRow.MaximumInterpolation)) {
+                        signalConfiguration.MaximumInterpolation = metadata[TagsWithMetadataReaderConfigV1.MetadataRow.MaximumInterpolation][count];
                     }
-                    if (metadata.ContainsKey(MetadataRow.InterpolationType)) {
-                        signalConfiguration.InterpolationType = metadata[MetadataRow.InterpolationType][count];
+                    if (metadata.ContainsKey(TagsWithMetadataReaderConfigV1.MetadataRow.InterpolationType)) {
+                        signalConfiguration.InterpolationType = metadata[TagsWithMetadataReaderConfigV1.MetadataRow.InterpolationType][count];
                     }
 
                     signalConfigurations.Add(signalConfiguration);
@@ -323,9 +214,9 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
             // CSV data columns into memory along the way.  Some form of batching will exist in the next version
 
             int recordCounter = 0;
-            long lineNumber = firstDataRow;
-            CultureInfo cultureInfo = this.cultureInfoString != null ?
-                new CultureInfo(this.cultureInfoString) : null;
+            long lineNumber = this.ReaderConfiguration.FirstDataRow;
+            CultureInfo cultureInfo = this.ReaderConfiguration.CultureInfoString != null ?
+                new CultureInfo(this.ReaderConfiguration.CultureInfoString) : null;
             Dictionary<string, List<SampleInputV1>> seeqSignalData = new Dictionary<string, List<SampleInputV1>>();
             List<string> timestamps = new List<string>();
             string timestamp;
@@ -349,35 +240,35 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                     log.Debug($"Reached last row with date and time values after reading {recordCounter} records in file {filename}");
                     break;
                 }
-                if (DateTime.TryParseExact(rowFields[timestampHeaderIndex], this.timestampFormat, null, System.Globalization.DateTimeStyles.None, out formatTimeWithDate)) {
-                    if (string.IsNullOrWhiteSpace(this.timeZone)) {
+                if (DateTime.TryParseExact(rowFields[timestampHeaderIndex], this.ReaderConfiguration.TimestampFormat, null, System.Globalization.DateTimeStyles.None, out formatTimeWithDate)) {
+                    if (string.IsNullOrWhiteSpace(this.ReaderConfiguration.Zone)) {
                         if (timezoneWarningIssued == false) {
                             log.Warn("No TimeZone specified - C# will assign time zone automatically.");
                             timezoneWarningIssued = true;
                         }
                         timestamp = rowFields[timestampHeaderIndex];
                     } else {
-                        timestamp = string.Format("{0} {1}", rowFields[timestampHeaderIndex], this.timeZone);
+                        timestamp = string.Format("{0} {1}", rowFields[timestampHeaderIndex], this.ReaderConfiguration.Zone);
                     }
                 } else {
                     throw new Exception($"On line {lineNumber} of file {filename}, " +
                         $"timestamp {rowFields[timestampHeaderIndex]} did not conform to format " +
-                        $"{timestampFormat}");
+                        $"{this.ReaderConfiguration.TimestampFormat}");
                 }
 
                 if (DateTime.TryParse(timestamp, cultureInfo, DateTimeStyles.None, out timestampAsDateTime)) {
                     timestampIsoString = timestampAsDateTime.ToString("o");
                     if (timestampAsDateTime.Kind == DateTimeKind.Unspecified) {
-                        timestampIsoString += this.timeZone;
+                        timestampIsoString += this.ReaderConfiguration.Zone;
                     }
                 } else {
                     string errMsg = $"Failed to parse date time timezone string {timestamp} concatenated from column {timestampHeaderIndex} " +
-                        $"and configured TimeZone {this.timeZone} for file {filename}";
+                        $"and configured TimeZone {this.ReaderConfiguration.Zone} for file {filename}";
                     parser.Close();
                     parser.Dispose();
                     throw new Exception(errMsg);
                 }
-                if (this.enforceTimestampOrder &&
+                if (this.ReaderConfiguration.EnforceTimestampOrder &&
                     DateTime.Parse(timestampIsoString).ToUniversalTime() < DateTime.Parse(previousTimestamp).ToUniversalTime()) {
                     string errMsg = string.Format("Found out of order timestamps {0}, {1} in file {2}", previousTimestamp, timestampIsoString, filename);
                     parser.Close();
@@ -386,8 +277,8 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 }
                 foreach (string signalHeader in signalHeaderIndices.Keys) {
                     string seeqSignalPath = "";
-                    if (this.useFilePathForHierarchy) {
-                        seeqSignalPath = assetPath + pathSeparator;
+                    if (this.ReaderConfiguration.UseFilePathForHierarchy) {
+                        seeqSignalPath = assetPath + this.ReaderConfiguration.PathSeparator;
                     }
                     seeqSignalPath +=
                         signalHeader;
@@ -407,7 +298,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                              double.TryParse(sample.Value.ToString(), NumberStyles.Any, cultureInfo, out numDouble)));
                         if (validSample) {
                             seeqSignalData[seeqSignalPath].Add(sample);
-                        } else if (postInvalidSamplesInsteadOfSkipping) {
+                        } else if (this.ReaderConfiguration.PostInvalidSamplesInsteadOfSkipping) {
                             string nullString = null;
                             seeqSignalData[seeqSignalPath].Add(new SampleInputV1 { Key = timestampIsoString, Value = nullString });
                         }
@@ -421,11 +312,11 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 recordCounter++;
                 previousTimestamp = timestampIsoString;
 
-                if (recordCounter == this.recordsPerDataPacket) {
+                if (recordCounter == this.ReaderConfiguration.RecordsPerDataPacket) {
                     DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                         ConnectionService = this.ConnectionService,
                         Filename = filename,
-                        PathSeparator = pathSeparator,
+                        PathSeparator = this.ReaderConfiguration.PathSeparator,
                         SignalConfigurations = signalConfigurations,
                         SeeqSignalData = seeqSignalData,
                         ScopedTo = fileScopedTo
@@ -446,7 +337,7 @@ namespace Seeq.Link.Connector.DirectoryWatch.DataFileReaders {
                 DirectoryWatchSignalData signalData = new DirectoryWatchSignalData {
                     ConnectionService = this.ConnectionService,
                     Filename = filename,
-                    PathSeparator = pathSeparator,
+                    PathSeparator = this.ReaderConfiguration.PathSeparator,
                     SignalConfigurations = signalConfigurations,
                     SeeqSignalData = seeqSignalData,
                     ScopedTo = fileScopedTo

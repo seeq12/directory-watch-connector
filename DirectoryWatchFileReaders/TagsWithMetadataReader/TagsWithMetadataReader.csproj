@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TagsWithMetadataReaderConfigV1.cs" />
     <Compile Include="TagsWithMetadataReaderV1.cs" />
   </ItemGroup>
   <ItemGroup>

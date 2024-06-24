@@ -35,7 +35,7 @@ namespace Seeq.Link.Connector.DirectoryWatch {
 
         public Dictionary<string, Func<Dictionary<string, string>, object>> LoadDataFileReaderDLLs(bool debugMode = false) {
             // Grab the full path of the Agent DLL that is currently executing
-            string executingAssemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string executingAssemblyLocation = Assembly.GetExecutingAssembly().Location;
 
             Dictionary<string, Func<Dictionary<string, string>, object>> readerInstantiators =
                 new Dictionary<string, Func<Dictionary<string, string>, object>>();
